@@ -1,0 +1,80 @@
+{
+  "config": {
+    "worldWidth": 4000,
+    "gravity": 600
+  },
+  "scenery": [
+    {
+      "type": "ground",
+      "x": 0,
+      "y": 550,
+      "width": 4000,
+      "height": 50
+    },
+    {
+      "type": "platform",
+      "x": 600,
+      "y": 450,
+      "width": 200,
+      "height": 20
+    },
+    {
+      "type": "platform",
+      "x": 900,
+      "y": 350,
+      "width": 200,
+      "height": 20
+    },
+    {
+      "type": "wall",
+      "x": 1400,
+      "y": 450,
+      "width": 50,
+      "height": 100
+    }
+  ],
+  "zones": [
+    {
+      "id": "pandemia",
+      "startX": 1500,
+      "endX": 2500,
+      "theme": "dark",
+      "ambientText": "2020: La pandemia y el trabajo remoto"
+    }
+  ],
+  "milestones": [
+    {
+      "x": 700,
+      "y": 400,
+      "icon": "mushroom",
+      "modalData": {
+        "date": "Enero 2018",
+        "title": "Mi primer empleo",
+        "text": "Aqu\u00ed comenz\u00f3 mi aventura profesional. Aprend\u00ed a trabajar en equipo y a enfrentarme a retos reales de negocio.",
+        "imagePath": "https://via.placeholder.com/300x150?text=Primer+Empleo"
+      }
+    },
+    {
+      "x": 2000,
+      "y": 500,
+      "icon": "star",
+      "modalData": {
+        "date": "Marzo 2020",
+        "title": "El reto del COVID-19",
+        "text": "Me adapt\u00e9 a nuevas formas de trabajo y aprend\u00ed a ser resiliente liderando proyectos 100% remotos.",
+        "imagePath": "https://via.placeholder.com/300x150?text=Trabajo+Remoto"
+      }
+    },
+    {
+      "x": 3200,
+      "y": 500,
+      "icon": "heart",
+      "modalData": {
+        "date": "Actualidad",
+        "title": "Buscando nuevos retos",
+        "text": "\u00a1Listo para aportar valor a un nuevo equipo y seguir creciendo!",
+        "imagePath": "https://via.placeholder.com/300x150?text=Futuro"
+      }
+    }
+  ]
+}

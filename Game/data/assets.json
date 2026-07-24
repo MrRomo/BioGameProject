@@ -1,0 +1,17 @@
+{
+  "_comment": "Sprite manifest (Phase 7). Add a key + path here and the matching placeholder primitive is automatically replaced by the real sprite — no code changes needed. Leave a category empty to keep using placeholders.",
+
+  "characters": {
+  },
+
+  "structures": {
+    "ground": { "path": "assets/sprites/structures/ground.jpeg" }
+  },
+
+  "icons": {
+  },
+
+  "backgrounds": {
+    "bg_sky": { "path": "assets/images/backgrounds/bg_sky.wepb" }
+  }
+}

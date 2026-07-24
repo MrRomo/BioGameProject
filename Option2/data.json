@@ -1,0 +1,39 @@
+{
+  "config": {
+    "playerSpeed": 250,
+    "jumpForce": -500
+  },
+  "level": {
+    "width": 3000,
+    "height": 600
+  },
+  "darkZones": [
+    { "x1": 1000, "x2": 1500, "color": "0x000000", "alpha": 0.6 }
+  ],
+  "structures": [
+    { "x": 600, "y": 510, "width": 50, "height": 100, "type": "wall" },
+    { "x": 1800, "y": 535, "width": 80, "height": 50, "type": "pipe" }
+  ],
+  "events": [
+    {
+      "x": 400,
+      "y": 450,
+      "type": "mushroom",
+      "uiPayload": {
+        "title": "Inicio de la Universidad",
+        "date": "2015 - 2019",
+        "description": "Comencé mis estudios. Este fue un momento clave de crecimiento, por eso está representado como un hongo."
+      }
+    },
+    {
+      "x": 1250,
+      "y": 450,
+      "type": "life",
+      "uiPayload": {
+        "title": "Periodo de Pandemia",
+        "date": "2020",
+        "description": "El mundo se detuvo, pero sirvió para aprender nuevas tecnologías por mi cuenta."
+      }
+    }
+  ]
+}

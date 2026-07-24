@@ -1,0 +1,107 @@
+{
+  "config": {
+    "worldWidth": 4000,
+    "gravity": 800,
+    "playerSpeed": 300,
+    "jumpVelocity": -550,
+    "playerStart": { "x": 100, "y": 300 },
+    "goalX": 3800
+  },
+
+  "background": [
+    { "key": "bg_sky",       "parallax": 0.0, "tileX": false },
+    { "key": "bg_clouds",    "parallax": 0.2, "tileX": true },
+    { "key": "bg_mountains", "parallax": 0.4, "tileX": true },
+    { "key": "bg_trees",     "parallax": 0.7, "tileX": true }
+  ],
+
+  "scenery": [
+    { "type": "ground",   "x": 0,    "y": 550, "width": 4000, "height": 50 },
+    { "type": "platform", "x": 600,  "y": 450, "width": 200,  "height": 20 },
+    { "type": "platform", "x": 900,  "y": 350, "width": 200,  "height": 20 },
+    { "type": "wall",     "x": 1500, "y": 450, "width": 50,   "height": 100 },
+    { "type": "pipe",     "x": 3050, "y": 470, "width": 64,   "height": 96 },
+    { "type": "flag",     "x": 3800, "y": 422, "width": 32,   "height": 128 }
+  ],
+
+  "zones": [
+    {
+      "id": "challenge-1",
+      "startX": 2200,
+      "endX": 3000,
+      "theme": "dark",
+      "skyColor": "#222222",
+      "ambientText": "2020 — A difficult chapter",
+      "fadeMs": 1000,
+      "music": "music_dark"
+    }
+  ],
+
+  "milestones": [
+    {
+      "x": 700, "y": 400, "icon": "mushroom",
+      "event": {
+        "id": "beginning",
+        "date": "TODO — Year",
+        "title": "TODO — Where it all began",
+        "text": "Replace this text with your own story. This is the first milestone the player finds — a great place to introduce yourself.",
+        "imagePath": "",
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 1000, "y": 300, "icon": "star",
+      "event": {
+        "id": "education",
+        "date": "TODO — Year",
+        "title": "TODO — Education",
+        "text": "Replace this text with details about your education or early growth.",
+        "imagePath": "",
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 1700, "y": 500, "icon": "star",
+      "event": {
+        "id": "first-job",
+        "date": "TODO — Year",
+        "title": "TODO — First job",
+        "text": "Replace this text with the story of your first role or big break.",
+        "imagePath": "",
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 2600, "y": 500, "icon": "heart",
+      "event": {
+        "id": "challenge",
+        "date": "TODO — Year",
+        "title": "TODO — A challenge you overcame",
+        "text": "Replace this text with a challenge or setback and how you grew from it. Sits inside the Dark Zone above.",
+        "imagePath": "",
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 3400, "y": 500, "icon": "trophy",
+      "event": {
+        "id": "today",
+        "date": "Today",
+        "title": "TODO — Where I am now",
+        "text": "Replace this text with where you are today and what's next.",
+        "imagePath": "",
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    }
+  ]
+}

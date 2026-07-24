@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Presentación Interactiva</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Cargamos Phaser 3 -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+</head>
+<body>
+    <!-- Capa de la Interfaz de Usuario (UI) DOM -->
+    <div id="ui-layer" class="hidden">
+        <div id="modal">
+            <h2 id="modal-title">Título</h2>
+            <span id="modal-date">Fecha</span>
+            <p id="modal-desc">Descripción</p>
+            <button id="btn-close">Continuar</button>
+        </div>
+    </div>
+
+    <!-- Contenedor del Juego -->
+    <div id="game-container"></div>
+
+    <!-- Script principal del juego -->
+    <script src="game.js"></script>
+</body>
+</html>
