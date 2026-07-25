@@ -233,6 +233,18 @@ function buildScenery(sceneRef) {
 // ============================================================
 // 4. PLAYER (Phase 2) — sprite/placeholder swap
 // ============================================================
+const PLAYER_STATE_KEY = { idle: 'player_idle', walk: 'player_walk', jump: 'player_jump' };
+
+// Walk cycle assembled from the single-pose PNGs — the idle pose doubles as the
+// passing frame between the two strides. Phaser accepts animation frames from
+// different textures, so this needs no sprite sheet.
+const PLAYER_WALK_CYCLE = ['player_idle', 'player_walk', 'player_idle', 'player_walk2'];
+const PLAYER_WALK_FPS = 8;
+
+let playerState = null;   // 'idle' | 'walk' | 'jump' — so we only touch the sprite on a real change
+let lastGroundedAt = 0;
+const COYOTE_MS = 100;
+
 function buildPlayer(sceneRef) {
   const start = worldData.config.playerStart;
   const s = worldData.config.worldScale || 1;
@@ -241,22 +253,94 @@ function buildPlayer(sceneRef) {
   if (hasAsset('player_idle')) {
     p = sceneRef.physics.add.sprite(start.x, start.y, 'player_idle');
     p.setScale(s);
-    if (hasAsset('player_walk')) {
-      sceneRef.anims.create({
-        key: 'walk',
-        frames: sceneRef.anims.generateFrameNumbers('player_walk'),
-        frameRate: 10,
-        repeat: -1
-      });
-    }
+    warnOnMixedFrameSizes(sceneRef);
+    registerPlayerAnims(sceneRef);
   } else {
     p = sceneRef.add.rectangle(start.x, start.y, 32 * s, 48 * s, 0x1E90FF);
     sceneRef.physics.add.existing(p);
   }
 
-  p.body.setBounce(0.1);
+  // No bounce: even a small one keeps re-launching the player off the ground for
+  // a frame at a time, which makes the "am I standing?" check below flicker.
+  p.body.setBounce(0);
   p.body.setCollideWorldBounds(true);
   return p;
+}
+
+// Every player pose has to share one frame size. Phaser derives the physics
+// body's position from the sprite's displayOrigin — half the *frame* size — so a
+// pose that is a few px taller silently shoves the body down into the ground, and
+// once that overlap passes Arcade's OVERLAP_BIAS the engine stops separating it
+// and the player sinks through the floor. Pad the PNGs to a common canvas
+// (feet on the bottom edge) rather than trying to fix it in code.
+function warnOnMixedFrameSizes(sceneRef) {
+  const sizes = playerTextureKeys()
+    .map(key => sceneRef.textures.getFrame(key))
+    .map(f => `${f.realWidth}x${f.realHeight}`);
+
+  if (new Set(sizes).size > 1) {
+    console.warn('[player] pose frames differ in size:',
+      playerTextureKeys().map((k, i) => `${k} ${sizes[i]}`).join(', '),
+      '— pad them to one canvas or the player will fall through the ground.');
+  }
+}
+
+function playerTextureKeys() {
+  const keys = Object.values(PLAYER_STATE_KEY).concat(PLAYER_WALK_CYCLE);
+  return keys.filter((key, i) => hasAsset(key) && keys.indexOf(key) === i);
+}
+
+// A single-pose PNG stays a plain texture (setPlayerState just swaps it in). Only
+// a real strip — frameWidth/frameHeight in assets.json, more than one frame —
+// becomes an animation, so dropping in proper sheets later needs no code change.
+// frameTotal counts the __BASE frame, hence the > 2.
+function registerPlayerAnims(sceneRef) {
+  Object.values(PLAYER_STATE_KEY).forEach(key => {
+    if (!hasAsset(key) || sceneRef.textures.get(key).frameTotal <= 2) return;
+    sceneRef.anims.create({
+      key,
+      frames: sceneRef.anims.generateFrameNumbers(key),
+      frameRate: 10,
+      repeat: -1
+    });
+  });
+
+  // Otherwise build the walk cycle out of whichever single poses exist. It is
+  // registered under the walk *texture* key, which is what setPlayerState()
+  // already looks up — a real walk sheet above wins and this leaves it alone.
+  const walkKey = PLAYER_STATE_KEY.walk;
+  const frames = PLAYER_WALK_CYCLE.filter(hasAsset).map(key => ({ key }));
+
+  if (!sceneRef.anims.exists(walkKey) && frames.length > 1) {
+    sceneRef.anims.create({ key: walkKey, frames, frameRate: PLAYER_WALK_FPS, repeat: -1 });
+  }
+}
+
+// touching.down is only set on frames where the body actually moved down into a
+// platform — it means "I hit something this frame", not "I'm standing on it". The
+// world bounds set blocked.down instead. Combine both, and remember the last
+// contact briefly so a single contact-free frame doesn't read as airborne.
+function isGrounded() {
+  const b = player.body;
+  if (b.blocked.down || b.touching.down) {
+    lastGroundedAt = scene.time.now;
+    return true;
+  }
+  return scene.time.now - lastGroundedAt < COYOTE_MS;
+}
+
+function setPlayerState(state) {
+  if (state === playerState) return;
+  const key = PLAYER_STATE_KEY[state];
+  if (!hasAsset(key)) return;
+  playerState = state;
+
+  if (scene.anims.exists(key)) {
+    player.play(key, true);
+  } else {
+    player.anims.stop();
+    player.setTexture(key);
+  }
 }
 
 // ============================================================
@@ -465,6 +549,7 @@ function update() {
 
   const speed = worldData.config.playerSpeed || 300;
   const jumpVelocity = worldData.config.jumpVelocity || -550;
+  let grounded = isGrounded();
 
   if (cursors.left.isDown) {
     player.body.setVelocityX(-speed);
@@ -476,20 +561,16 @@ function update() {
     player.body.setVelocityX(0);
   }
 
-  if ((cursors.up.isDown || cursors.space.isDown) && player.body.touching.down) {
+  if ((cursors.up.isDown || cursors.space.isDown) && grounded) {
     player.body.setVelocityY(jumpVelocity);
+    lastGroundedAt = 0; // spend the coyote window so one press is one jump
+    grounded = false;   // switch to the jump pose on this frame, not the next
   }
 
-  if (player.anims && hasAsset('player_walk')) {
-    if (player.body.touching.down && player.body.velocity.x !== 0) {
-      player.play('walk', true);
-    } else if (player.body.touching.down) {
-      player.anims.stop();
-      if (hasAsset('player_idle')) player.setTexture('player_idle');
-    } else if (hasAsset('player_jump')) {
-      player.anims.stop();
-      player.setTexture('player_jump');
-    }
+  if (player.anims && hasAsset('player_idle')) {
+    if (!grounded) setPlayerState('jump');
+    else if (player.body.velocity.x !== 0) setPlayerState('walk');
+    else setPlayerState('idle');
   }
 
   updateZones();

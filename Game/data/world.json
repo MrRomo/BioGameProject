@@ -2,7 +2,7 @@
   "config": {
     "worldWidth": 40000,
     "gravity": 800,
-    "playerSpeed": 900,
+    "playerSpeed": 300,
     "jumpVelocity": -550,
     "playerStart": { "x": 100, "y": 300 },
     "goalX": 12000,

@@ -2,6 +2,10 @@
   "_comment": "Sprite manifest (Phase 7). Add a key + path here and the matching placeholder primitive is automatically replaced by the real sprite — no code changes needed. Leave a category empty to keep using placeholders.",
 
   "characters": {
+    "player_idle": { "path": "assets/sprites/characters/player_idle.png" },
+    "player_walk": { "path": "assets/sprites/characters/player_walk.png" },
+    "player_walk2": { "path": "assets/sprites/characters/player_walk2.png" },
+    "player_jump": { "path": "assets/sprites/characters/player_jump.png" }
   },
 
   "structures": {
