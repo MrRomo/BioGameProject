@@ -5,13 +5,15 @@
   },
 
   "structures": {
-    "ground": { "path": "assets/sprites/structures/ground.jpeg" }
+    "ground": { "path": "assets/sprites/structures/ground.png" },
+    "wall": { "path": "assets/sprites/structures/wall.png" },
+    "pipe": { "path": "assets/sprites/structures/pipe.png" },
+    "platform": { "path": "assets/sprites/structures/platform.png" }
   },
 
   "icons": {
   },
 
   "backgrounds": {
-    "bg_sky": { "path": "assets/images/backgrounds/bg_sky.wepb" }
   }
 }

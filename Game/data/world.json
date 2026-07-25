@@ -1,37 +1,59 @@
 {
   "config": {
-    "worldWidth": 4000,
+    "worldWidth": 40000,
     "gravity": 800,
-    "playerSpeed": 300,
+    "playerSpeed": 900,
     "jumpVelocity": -550,
     "playerStart": { "x": 100, "y": 300 },
-    "goalX": 3800
+    "goalX": 12000
   },
 
   "background": [
-    { "key": "bg_sky",       "parallax": 0.0, "tileX": false },
+    { "key": "bg_sky",       "parallax": 0.0, "tileX": true },
     { "key": "bg_clouds",    "parallax": 0.2, "tileX": true },
     { "key": "bg_mountains", "parallax": 0.4, "tileX": true },
     { "key": "bg_trees",     "parallax": 0.7, "tileX": true }
   ],
 
+  "sky": { "top": "#4a90d9", "mid": "#87CEEB", "bottom": "#eaf6ff" },
+
   "scenery": [
-    { "type": "ground",   "x": 0,    "y": 550, "width": 4000, "height": 50 },
+    { "type": "ground",   "x": 0,    "y": 550, "width": 40000, "height": 50 },
     { "type": "platform", "x": 600,  "y": 450, "width": 200,  "height": 20 },
     { "type": "platform", "x": 900,  "y": 350, "width": 200,  "height": 20 },
     { "type": "wall",     "x": 1500, "y": 450, "width": 50,   "height": 100 },
     { "type": "pipe",     "x": 3050, "y": 470, "width": 64,   "height": 96 },
-    { "type": "flag",     "x": 3800, "y": 422, "width": 32,   "height": 128 }
+    { "type": "flag",     "x": 12000, "y": 422, "width": 32,   "height": 128 }
   ],
 
   "zones": [
+     {
+      "id": "my-family",
+      "startX": 1000,
+      "endX": 1800,
+      "theme": "dark",
+      "sky": { "top": "#0d1b2a", "mid": "#1b3a5c", "bottom": "#2c4a6e" },
+      "ambientText": "2020 — A difficult chapter",
+      "fadeMs": 1000,
+      "music": "music_dark"
+    },
     {
       "id": "challenge-1",
       "startX": 2200,
       "endX": 3000,
       "theme": "dark",
-      "skyColor": "#222222",
+      "sky": { "top": "#0d1b2a", "mid": "#1b3a5c", "bottom": "#2c4a6e" },
       "ambientText": "2020 — A difficult chapter",
+      "fadeMs": 1000,
+      "music": "music_dark"
+    },
+     {
+      "id": "challenge-2",
+      "startX": 3200,
+      "endX": 5000,
+      "theme": "dark",
+      "sky": { "top": "#0d1b2a", "mid": "#1b3a5c", "bottom": "#2c4a6e" },
+      "ambientText": "2022 — A difficult chapter",
       "fadeMs": 1000,
       "music": "music_dark"
     }
@@ -91,7 +113,7 @@
       }
     },
     {
-      "x": 3400, "y": 500, "icon": "trophy",
+      "x": 9400, "y": 500, "icon": "trophy",
       "event": {
         "id": "today",
         "date": "Today",

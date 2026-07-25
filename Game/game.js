@@ -1,7 +1,8 @@
 // ============================================================
 // Life Story Engine — prototype build (Phases 1-7)
 // Scene-transition behavior follows Option 1: gradual sky-color
-// fade (tweens.addCounter) + fading ambient caption + DOM modal.
+// fade (JS-driven crossfade of CSS custom properties, see applySky()) + fading
+// ambient caption + DOM modal.
 // ============================================================
 
 const config = {
@@ -9,6 +10,7 @@ const config = {
   parent: 'game-container',
   width: window.innerWidth,
   height: window.innerHeight,
+  transparent: true, // lets the CSS sky gradient on <html>/<body> show through the canvas
   physics: {
     default: 'arcade',
     arcade: { gravity: { y: 800 }, debug: false }
@@ -22,13 +24,10 @@ const game = new Phaser.Game(config);
 let scene;                 // active Phaser scene (set in create)
 let player, cursors;
 let worldData, assetManifest;
-let backgroundRect;        // fallback sky rect, tinted by Phase 5 transitions
 let bgLayers = [];
 let isPaused = false;
-let inDarkZone = false;
+let currentZoneId = null;
 let finished = false;
-
-const BASE_SKY = '#87CEEB';
 
 window.addEventListener('resize', () => {
   game.scale.resize(window.innerWidth, window.innerHeight);
@@ -55,6 +54,7 @@ function create() {
     return;
   }
   assetManifest = assetManifest || {};
+  applySky(worldData.sky);
 
   // Load any sprites registered in assets.json, then build the world.
   // While a category is empty, buildWorld() falls back to placeholder
@@ -132,11 +132,8 @@ function buildWorld(sceneRef) {
 // 3. WORLD & SCENERY (Phase 3) — sprite/placeholder swap via hasAsset()
 // ============================================================
 function buildBackground(sceneRef, worldW) {
-  // Fallback flat sky — Phase 5 tweens this color for Dark Zones.
-  backgroundRect = sceneRef.add.rectangle(0, 0, worldW * 2, window.innerHeight * 2, 0x87CEEB)
-    .setOrigin(0, 0);
-  backgroundRect.setDepth(-100);
-
+  // Sky itself is the CSS gradient behind the transparent canvas (see applySky()).
+  // These are just the parallax art layers drawn on top of it, when registered.
   worldData.background.forEach((layer, i) => {
     if (!hasAsset(layer.key)) return; // no art yet: stays on the flat sky fallback
     const img = sceneRef.add.tileSprite(0, 0, worldW, window.innerHeight, layer.key).setOrigin(0, 0);
@@ -257,31 +254,83 @@ function updateZones() {
   const px = player.x;
   const zone = worldData.zones.find(z => px >= z.startX && px <= z.endX);
   const zoneText = document.getElementById('zone-text');
+  const zoneId = zone ? zone.id : null;
 
-  if (zone && zone.theme === 'dark' && !inDarkZone) {
-    inDarkZone = true;
-    fadeSky(BASE_SKY, zone.skyColor || '#222222', zone.fadeMs || 1000);
+  if (zoneId === currentZoneId) return; // no change since last frame
+  currentZoneId = zoneId;
+
+  if (zone) {
+    applySky(zone.sky, zone.fadeMs || 800);
     zoneText.innerText = zone.ambientText || '';
     zoneText.classList.remove('hidden');
-  } else if (!(zone && zone.theme === 'dark') && inDarkZone) {
-    inDarkZone = false;
-    fadeSky('#222222', BASE_SKY, 1000);
+  } else {
+    applySky(worldData.sky, 1000);
     zoneText.classList.add('hidden');
   }
 }
 
-function fadeSky(fromHex, toHex, duration) {
-  scene.tweens.addCounter({
-    from: 0, to: 100, duration,
-    onUpdate: (tween) => {
-      const v = tween.getValue();
-      const c = Phaser.Display.Color.Interpolate.ColorWithColor(
-        Phaser.Display.Color.HexStringToColor(fromHex),
-        Phaser.Display.Color.HexStringToColor(toHex),
-        100, v);
-      backgroundRect.fillColor = Phaser.Display.Color.GetColor(c.r, c.g, c.b);
-    }
-  });
+// Crossfades the sky by writing interpolated colors into the CSS gradient
+// custom properties on <html>, frame by frame. Plain custom properties can't
+// be animated by a CSS `transition` (the browser has no defined interpolation
+// for them), so the fade itself has to happen here in JS — same idea as the
+// original Phaser fadeSky() tween, just retargeted at the CSS vars instead of
+// a Phaser rectangle's fillColor.
+let currentSky = null;
+let skyAnimGen = 0;
+
+function applySky(sky, fadeMs) {
+  if (!sky) return;
+  const target = {
+    top: sky.top || (currentSky && currentSky.top),
+    mid: sky.mid || (currentSky && currentSky.mid),
+    bottom: sky.bottom || (currentSky && currentSky.bottom)
+  };
+
+  if (!currentSky || !fadeMs) {
+    currentSky = target;
+    writeSkyVars(target);
+    return;
+  }
+
+  const from = currentSky;
+  currentSky = target;
+  const myGen = ++skyAnimGen;
+  const start = performance.now();
+
+  function tick(now) {
+    if (myGen !== skyAnimGen) return; // superseded by a newer zone change
+    const t = Math.min(1, (now - start) / fadeMs);
+    const eased = t * t * (3 - 2 * t); // smoothstep, for a soft crossfade
+    writeSkyVars({
+      top: lerpColor(from.top, target.top, eased),
+      mid: lerpColor(from.mid, target.mid, eased),
+      bottom: lerpColor(from.bottom, target.bottom, eased)
+    });
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function writeSkyVars(sky) {
+  const root = document.documentElement.style;
+  root.setProperty('--sky-top', sky.top);
+  root.setProperty('--sky-mid', sky.mid);
+  root.setProperty('--sky-bottom', sky.bottom);
+}
+
+function lerpColor(hexA, hexB, t) {
+  const a = hexToRgb(hexA), b = hexToRgb(hexB);
+  const r = Math.round(a.r + (b.r - a.r) * t);
+  const g = Math.round(a.g + (b.g - a.g) * t);
+  const bl = Math.round(a.b + (b.b - a.b) * t);
+  return `rgb(${r}, ${g}, ${bl})`;
+}
+
+function hexToRgb(hex) {
+  const h = hex.replace('#', '');
+  const v = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+  const num = parseInt(v, 16);
+  return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
 }
 
 // ============================================================
