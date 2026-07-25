@@ -252,7 +252,7 @@ function buildPlayer(sceneRef) {
 
   if (hasAsset('player_idle')) {
     p = sceneRef.physics.add.sprite(start.x, start.y, 'player_idle');
-    p.setScale(s);
+    p.setScale(s * 0.1);
     warnOnMixedFrameSizes(sceneRef);
     registerPlayerAnims(sceneRef);
   } else {
