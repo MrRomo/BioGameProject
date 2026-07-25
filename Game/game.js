@@ -54,6 +54,7 @@ function create() {
     return;
   }
   assetManifest = assetManifest || {};
+  scaleWorldData(worldData);
   applySky(worldData.sky);
 
   // Load any sprites registered in assets.json, then build the world.
@@ -62,6 +63,29 @@ function create() {
   loadManifestAssets(this, () => buildWorld(this));
 
   wireDomUI(this);
+}
+
+// Scales every world-unit value (positions, sizes, physics) by config.worldScale
+// so the whole game gets physically bigger — not just zoomed in — while keeping
+// everything relative to each other consistent. Mutates worldData in place, so
+// every function below just reads worldData as usual and gets scaled numbers.
+function scaleWorldData(data) {
+  const s = data.config.worldScale || 1;
+  if (s === 1) return;
+
+  data.config.worldWidth *= s;
+  data.config.goalX *= s;
+  data.config.playerSpeed *= s;
+  data.config.jumpVelocity *= s;
+  data.config.gravity *= s;
+  data.config.playerStart.x *= s;
+  data.config.playerStart.y *= s;
+
+  data.scenery.forEach(item => {
+    item.x *= s; item.y *= s; item.width *= s; item.height *= s;
+  });
+  data.milestones.forEach(item => { item.x *= s; item.y *= s; });
+  (data.zones || []).forEach(zone => { zone.startX *= s; zone.endX *= s; });
 }
 
 // world.json / assets.json fail to load when the page is opened via
@@ -104,6 +128,7 @@ function loadManifestAssets(sceneRef, onDone) {
 function buildWorld(sceneRef) {
   const worldW = worldData.config.worldWidth;
 
+  sceneRef.physics.world.gravity.y = worldData.config.gravity;
   sceneRef.cameras.main.setBounds(0, 0, worldW, window.innerHeight);
   sceneRef.physics.world.setBounds(0, 0, worldW, window.innerHeight);
 
@@ -113,7 +138,7 @@ function buildWorld(sceneRef) {
   const milestones = buildMilestones(sceneRef);
 
   sceneRef.cameras.main.startFollow(player, true, 0.08, 0.08);
-  sceneRef.cameras.main.setFollowOffset(0, 100);
+  sceneRef.cameras.main.setFollowOffset(0, 100 * (worldData.config.worldScale || 1));
 
   sceneRef.physics.add.collider(player, platforms);
   sceneRef.physics.add.overlap(player, milestones, hitMilestone, null, sceneRef);
@@ -180,10 +205,12 @@ function buildScenery(sceneRef) {
 // ============================================================
 function buildPlayer(sceneRef) {
   const start = worldData.config.playerStart;
+  const s = worldData.config.worldScale || 1;
   let p;
 
   if (hasAsset('player_idle')) {
     p = sceneRef.physics.add.sprite(start.x, start.y, 'player_idle');
+    p.setScale(s);
     if (hasAsset('player_walk')) {
       sceneRef.anims.create({
         key: 'walk',
@@ -193,7 +220,7 @@ function buildPlayer(sceneRef) {
       });
     }
   } else {
-    p = sceneRef.add.rectangle(start.x, start.y, 32, 48, 0x1E90FF);
+    p = sceneRef.add.rectangle(start.x, start.y, 32 * s, 48 * s, 0x1E90FF);
     sceneRef.physics.add.existing(p);
   }
 
@@ -215,22 +242,24 @@ const ICON_PLACEHOLDER_COLOR = {
 
 function buildMilestones(sceneRef) {
   const group = sceneRef.physics.add.group({ allowGravity: false, immovable: true });
+  const s = worldData.config.worldScale || 1;
 
   worldData.milestones.forEach(item => {
     let obj;
     const key = 'icon_' + item.icon;
     if (hasAsset(key)) {
       obj = sceneRef.add.sprite(item.x, item.y, key);
+      obj.setScale(s);
     } else {
       const color = ICON_PLACEHOLDER_COLOR[item.icon] ?? 0xff0000;
-      obj = sceneRef.add.circle(item.x, item.y, 20, color);
+      obj = sceneRef.add.circle(item.x, item.y, 20 * s, color);
     }
 
     group.add(obj); // physics body auto-enabled with group defaults above
     obj.eventData = item.event;
 
     sceneRef.tweens.add({
-      targets: obj, y: item.y - 15,
+      targets: obj, y: item.y - 15 * s,
       duration: 1500, ease: 'Sine.inOut',
       yoyo: true, repeat: -1
     });

@@ -5,7 +5,8 @@
     "playerSpeed": 900,
     "jumpVelocity": -550,
     "playerStart": { "x": 100, "y": 300 },
-    "goalX": 12000
+    "goalX": 12000,
+    "worldScale": 1.5
   },
 
   "background": [
@@ -18,7 +19,7 @@
   "sky": { "top": "#4a90d9", "mid": "#87CEEB", "bottom": "#eaf6ff" },
 
   "scenery": [
-    { "type": "ground",   "x": 0,    "y": 550, "width": 40000, "height": 50 },
+    { "type": "ground",   "x": 0,    "y": 550, "width": 40000, "height": 40 },
     { "type": "platform", "x": 600,  "y": 450, "width": 200,  "height": 20 },
     { "type": "platform", "x": 900,  "y": 350, "width": 200,  "height": 20 },
     { "type": "wall",     "x": 1500, "y": 450, "width": 50,   "height": 100 },
