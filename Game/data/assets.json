@@ -12,8 +12,16 @@
   },
 
   "icons": {
+    "icon_mushroom": { "path": "assets/sprites/icons/mushroom.png" },
+    "icon_star": { "path": "assets/sprites/icons/star.png" },
+    "icon_heart": { "path": "assets/sprites/icons/heart.png" },
+    "icon_trophy": { "path": "assets/sprites/icons/trophy.png" },
+    "coin": { "path": "assets/sprites/icons/coin.png" }
   },
 
   "backgrounds": {
+    "bg_clouds": { "path": "assets/images/backgrounds/clouds.png" },
+    "bg_mountains": { "path": "assets/images/backgrounds/mountains.png" },
+    "bg_trees": { "path": "assets/images/backgrounds/trees.png" }
   }
 }

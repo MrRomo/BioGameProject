@@ -159,13 +159,43 @@ function buildWorld(sceneRef) {
 function buildBackground(sceneRef, worldW) {
   // Sky itself is the CSS gradient behind the transparent canvas (see applySky()).
   // These are just the parallax art layers drawn on top of it, when registered.
+  const s = worldData.config.worldScale || 1;
+  const horizonY = getHorizonY();
+
   worldData.background.forEach((layer, i) => {
-    if (!hasAsset(layer.key)) return; // no art yet: stays on the flat sky fallback
-    const img = sceneRef.add.tileSprite(0, 0, worldW, window.innerHeight, layer.key).setOrigin(0, 0);
+    if (!hasAsset(layer.key)) return; // no art yet: stays on the CSS sky alone
+    let img;
+
+    if (layer.anchor === 'horizon') {
+      // Skyline strip (mountains, trees): one row only, bottom edge on the horizon.
+      // The band's height is derived FROM the same tileScale used to render each
+      // tile, so the tile height and the band height are always identical —
+      // there's no way for a second, partial row to appear underneath.
+      // layer.scale (optional, world.json) tunes how zoomed-in/detailed the art
+      // looks; it's independent from worldScale, which just keeps the whole level
+      // consistently sized.
+      const texH = sceneRef.textures.get(layer.key).getSourceImage().height;
+      const tileScale = s * (layer.scale || 1);
+      const bandH = texH * tileScale;
+      img = sceneRef.add.tileSprite(0, (horizonY + layer.yOffset) - bandH, worldW, bandH, layer.key).setOrigin(0, 0);
+      img.tileScaleX = tileScale;
+      img.tileScaleY = tileScale;
+    } else {
+      // Full-viewport layer (clouds): tiles to fill the whole sky area.
+      img = sceneRef.add.tileSprite(0, 0, worldW, window.innerHeight, layer.key).setOrigin(0, 0);
+    }
+
     img.setScrollFactor(layer.parallax);
     img.setDepth(-90 + i);
     bgLayers.push(img);
   });
+}
+
+// Horizon = top of the ground strip; horizon-anchored parallax bands rest their
+// bottom edge here. scaleWorldData() has already run, so ground.y is scaled.
+function getHorizonY() {
+  const ground = worldData.scenery.find(item => item.type === 'ground');
+  return (ground ? ground.y : window.innerHeight) + (window.innerHeight * 0.005);
 }
 
 const SCENERY_PLACEHOLDER_COLOR = {
