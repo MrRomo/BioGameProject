@@ -1,5 +1,5 @@
 {
-  "_comment": "Sprite manifest (Phase 7). Add a key + path here and the matching placeholder primitive is automatically replaced by the real sprite — no code changes needed. Leave a category empty to keep using placeholders.",
+  "_comment": "Asset manifest (Phase 7 sprites, Phase 8 audio). Add a key + path here and the matching placeholder primitive is automatically replaced by the real sprite — no code changes needed. Leave a category empty to keep using placeholders. Entries whose path ends in .mp3/.ogg/.wav/.m4a are loaded as audio instead of images.",
 
   "characters": {
     "player_idle": { "path": "assets/sprites/characters/player_idle.png" },
@@ -27,5 +27,17 @@
     "bg_clouds": { "path": "assets/images/backgrounds/clouds.png" },
     "bg_mountains": { "path": "assets/images/backgrounds/mountains.png" },
     "bg_trees": { "path": "assets/images/backgrounds/trees.png" }
+  },
+
+  "music": {
+    "music_game": { "path": "assets/music/music_game.mp3" }
+  },
+
+  "sfx": {
+    "sfx_start": { "path": "assets/sfx/start.mp3" },
+    "sfx_bonus": { "path": "assets/sfx/bonus.mp3" },
+    "sfx_walk_grass": { "path": "assets/sfx/walk_grass.mp3" },
+    "sfx_walk_stone": { "path": "assets/sfx/walk_stone.mp3" },
+    "sfx_jump": { "path": "assets/sfx/jump.mp3" }
   }
 }

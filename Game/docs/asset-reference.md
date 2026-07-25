@@ -213,19 +213,71 @@ matching milestone's `event.imagePath`. All 5 sample milestones in `world.json` 
 
 ---
 
+## Audio — `assets/music/` and `assets/sfx/`
+
+Audio goes through the **same manifest** as everything else, but `loadManifestAssets()` branches on the
+file extension rather than the category name:
+
+```js
+// game.js — AUDIO_EXT = /\.(mp3|ogg|wav|m4a)$/i
+if (AUDIO_EXT.test(def.path)) sceneRef.load.audio(key, def.path);
+```
+
+So a sound registered under *any* category loads correctly; the `"music"` / `"sfx"` groupings in
+`assets.json` are purely for readability. Everything else is owned by
+[sound_manager.js](../sound_manager.js) (`window.SoundManager`), loaded as a plain script **before**
+`game.js`.
+
+The audio equivalent of `hasAsset()` is `SoundManager.hasSound(key)` — `hasAsset()` checks
+`scene.textures` and always answers `false` for a sound. **Every** `SoundManager` entry point is guarded
+by it, so a missing file is silent, never an error: the game runs identically with all five audio files
+deleted.
+
+| Key | File | Plays when |
+|-----|------|------------|
+| `music_game` | `assets/music/music_game.mp3` | Begin ▶ pressed — loops for the whole run, fades in over 800 ms |
+| `sfx_start` | `assets/sfx/start.mp3` | Begin ▶ pressed (this click is also the WebAudio unlock gesture) |
+| `sfx_bonus` | `assets/sfx/bonus.mp3` | A milestone is reached, and again at The End |
+| `sfx_walk_grass` | `assets/sfx/walk_grass.mp3` | Walking on `ground` |
+| `sfx_walk_stone` | `assets/sfx/walk_stone.mp3` | Walking on `platform`, `wall`, or `pipe` |
+
+**Footsteps** are surface-aware. `buildScenery()` tags each piece with `piece.sceneryType`, and the
+player/platform collider callback `trackSurface()` reports it to `SoundManager.setSurface()` — guarded by
+`player.body.touching.down`, so brushing a wall sideways doesn't flip the footsteps to stone. The mapping
+lives in `SURFACE_SFX` in `sound_manager.js`; **an unlisted scenery type falls back to grass**, so a new
+`"type"` in `world.json` needs no audio change. Each footstep sound is played as a single looping
+instance started/stopped on the walk transition (`FOOTSTEP_MODE = 'loop'`), because the two recordings
+are very different lengths and no one step interval fits both.
+
+**Music vs. modals:** `hitMilestone()` calls `duckForModal()` — music fades out over 400 ms and
+*pauses*; `closeModal()` calls `unduckAfterModal()`, which resumes from the same position and fades back
+in. So the modal is read in silence without the track restarting.
+
+**Per-zone music** is wired but dormant. `updateZones()` calls
+`SoundManager.crossfadeMusic(zone.music, zone.fadeMs || 800)` — the same `fadeMs` that drives the sky
+crossfade, per the Phase 8 spec. All three zones in `world.json` name `music_dark`, which has no file
+yet, so `hasSound()` makes it a no-op today. Dropping `music_dark.mp3` into `assets/music/` and adding it
+to the manifest is enough to switch it on — **no code change**.
+
+**Volume** is two sliders (Music / Effects) in the `#settings-layer` modal, opened by the ⚙ button or
+`Esc`. Each sound's final level is `<slider> × <its base level in BASE_VOLUME>`, and the two slider
+values are persisted to `localStorage` under `bio_game_audio` — necessary because the Restart button does
+a `location.reload()`.
+
+---
+
 ## Reserved, not yet wired into code
 
-These folders exist (per the Phase 0 skeleton) but nothing in `game.js` reads them yet — they're staged
-for Phase 8:
+These folders exist (per the Phase 0 skeleton) but nothing in `game.js` reads them yet:
 
 | Folder | Intended use | Status |
 |--------|----------------|--------|
-| `assets/music/` | background tracks, cross-faded per zone (`world.json` zone `music` field is already present in data but unread by code) | ⬜ not implemented |
-| `assets/sfx/` | jump / pickup / modal sound effects | ⬜ not implemented |
+| `assets/music/` | background tracks, cross-faded per zone | ✅ implemented — see Audio above (`music_dark` still needs a file) |
+| `assets/sfx/` | footsteps / milestone / start stings | ✅ implemented — see Audio above |
 | `assets/images/ui/` | themed modal frame, button skin, timeline dots | ⬜ not implemented |
 | `assets/fonts/` | custom webfont for headings/UI | ⬜ not implemented |
 
-See [phase-8-polish-presentation.md](phase-8-polish-presentation.md) for the planned hookup.
+See [phase-8-polish-presentation.md](phase-8-polish-presentation.md) for the rest of the planned hookup.
 
 ---
 
@@ -266,4 +318,10 @@ table together as files are added.
 | Backgrounds | `bg_clouds` | ⬜ |
 | Backgrounds | `bg_mountains` | ⬜ |
 | Backgrounds | `bg_trees` | ⬜ |
+| Music | `music_game` | ✅ |
+| Music | `music_dark` | ⬜ (referenced by all 3 zones in `world.json`, no file yet) |
+| SFX | `sfx_start` | ✅ |
+| SFX | `sfx_bonus` | ✅ |
+| SFX | `sfx_walk_grass` | ✅ |
+| SFX | `sfx_walk_stone` | ✅ |
 | Event images | one per milestone in `world.json` | ⬜ (5 milestones, all currently empty) |

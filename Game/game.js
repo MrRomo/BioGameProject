@@ -26,6 +26,7 @@ let player, cursors;
 let worldData, assetManifest;
 let bgLayers = [];
 let isPaused = false;
+let settingsOpen = false;  // sound menu is up — halts play without touching isPaused
 let currentZoneId = null;
 let finished = false;
 
@@ -104,6 +105,8 @@ function hasAsset(key) {
   return !!(scene && key && scene.textures.exists(key));
 }
 
+const AUDIO_EXT = /\.(mp3|ogg|wav|m4a)$/i;
+
 function loadManifestAssets(sceneRef, onDone) {
   let queued = 0;
   Object.values(assetManifest || {}).forEach(group => {
@@ -111,7 +114,11 @@ function loadManifestAssets(sceneRef, onDone) {
     Object.entries(group).forEach(([key, def]) => {
       if (!def || !def.path) return;
       queued++;
-      if (def.frameWidth && def.frameHeight) {
+      // Audio is detected by file extension rather than by category name, so a
+      // sound dropped into any group still loads as a sound.
+      if (AUDIO_EXT.test(def.path)) {
+        sceneRef.load.audio(key, def.path);
+      } else if (def.frameWidth && def.frameHeight) {
         sceneRef.load.spritesheet(key, def.path,
           { frameWidth: def.frameWidth, frameHeight: def.frameHeight });
       } else {
@@ -128,6 +135,7 @@ function loadManifestAssets(sceneRef, onDone) {
 function buildWorld(sceneRef) {
   const worldW = worldData.config.worldWidth;
 
+  SoundManager.init(sceneRef);
   sceneRef.physics.world.gravity.y = worldData.config.gravity;
   sceneRef.cameras.main.setBounds(0, 0, worldW, window.innerHeight);
   sceneRef.physics.world.setBounds(0, 0, worldW, window.innerHeight);
@@ -140,7 +148,7 @@ function buildWorld(sceneRef) {
   sceneRef.cameras.main.startFollow(player, true, 0.08, 0.08);
   sceneRef.cameras.main.setFollowOffset(0, 100 * (worldData.config.worldScale || 1));
 
-  sceneRef.physics.add.collider(player, platforms);
+  sceneRef.physics.add.collider(player, platforms, trackSurface);
   sceneRef.physics.add.overlap(player, milestones, hitMilestone, null, sceneRef);
 
   cursors = sceneRef.input.keyboard.createCursorKeys();
@@ -219,6 +227,10 @@ function buildScenery(sceneRef) {
         item.x + item.width / 2, item.y + item.height / 2, item.width, item.height, color);
     }
 
+    // Remembered so the collider below can tell the footstep sound which
+    // material the player is actually standing on.
+    piece.sceneryType = item.type;
+
     // The flag is a decorative goal marker (checked by x-position in update()),
     // not a collidable wall — walking "through" it is what reaches The End.
     if (item.type === 'flag') return;
@@ -228,6 +240,27 @@ function buildScenery(sceneRef) {
   });
 
   return platforms;
+}
+
+// Collider callback: fires for every contact, including bumping sideways into a
+// wall — and only a contact *underneath* the player says anything about what
+// they're walking on.
+//
+// The obvious guard, touching.down, does not work here: scenery is made of
+// STATIC bodies, and Arcade reports those through blocked.down instead (the same
+// distinction isGrounded() documents above). Standing still on the ground it is
+// blocked.down that stays true, so a touching.down check silently never fires.
+// But blocked.down alone is no good either — it is true from the ground while
+// the player pushes sideways into a wall, which would flip the footsteps to
+// stone. So compare geometry: the piece counts only if the player's feet are
+// resting on its top edge.
+const SURFACE_FOOT_TOLERANCE = 8;
+
+function trackSurface(_player, piece) {
+  if (!piece.body) return;
+  const feet = player.body.bottom;
+  if (Math.abs(feet - piece.body.top) > SURFACE_FOOT_TOLERANCE) return;
+  SoundManager.setSurface(piece.sceneryType);
 }
 
 // ============================================================
@@ -383,10 +416,13 @@ function buildMilestones(sceneRef) {
 }
 
 function hitMilestone(_player, obj) {
-  if (isPaused) return; // anti-rebounce
+  if (isPaused || settingsOpen) return; // anti-rebounce / not while the sound menu is up
   isPaused = true;
   player.body.setVelocity(0, 0);
   if (obj.eventData?.consume !== false) obj.destroy();
+
+  SoundManager.playSfx(SoundManager.SFX.bonus);
+  SoundManager.duckForModal();
   openEventModal(obj.eventData);
 }
 
@@ -402,12 +438,16 @@ function updateZones() {
   if (zoneId === currentZoneId) return; // no change since last frame
   currentZoneId = zoneId;
 
+  // Music crossfades on the same clock as the sky so the two land together.
+  // A zone naming a track that has no file just leaves the current one playing.
   if (zone) {
     applySky(zone.sky, zone.fadeMs || 800);
+    SoundManager.crossfadeMusic(zone.music, zone.fadeMs || 800);
     zoneText.innerText = zone.ambientText || '';
     zoneText.classList.remove('hidden');
   } else {
     applySky(worldData.sky, 1000);
+    SoundManager.crossfadeMusic(null, 1000);
     zoneText.classList.add('hidden');
   }
 }
@@ -497,12 +537,16 @@ function openEventModal(data) {
 
 function closeModal() {
   document.getElementById('ui-layer').classList.add('hidden');
+  SoundManager.unduckAfterModal();
   setTimeout(() => { isPaused = false; }, 100); // avoid instant re-trigger
 }
 
 function wireDomUI(sceneRef) {
   document.getElementById('start-btn').addEventListener('click', () => {
     document.getElementById('title-card').classList.add('hidden');
+    // This click is the user gesture browsers require before WebAudio will make
+    // any sound at all, so the whole soundtrack has to start from right here.
+    SoundManager.startGame();
     sceneRef.game.canvas.focus();
   });
 
@@ -514,6 +558,41 @@ function wireDomUI(sceneRef) {
     if (finished) { location.reload(); return; }
     closeModal();
   });
+
+  wireSoundMenu();
+}
+
+// ---------- Sound settings menu (Phase 8) ----------
+function wireSoundMenu() {
+  const layer = document.getElementById('settings-layer');
+  const musicSlider = document.getElementById('music-vol');
+  const sfxSlider = document.getElementById('sfx-vol');
+
+  // Seed the sliders from whatever was persisted on a previous run.
+  const saved = SoundManager.getVolumes();
+  musicSlider.value = Math.round(saved.music * 100);
+  sfxSlider.value = Math.round(saved.sfx * 100);
+
+  musicSlider.addEventListener('input', () => SoundManager.setMusicVolume(musicSlider.value / 100));
+  sfxSlider.addEventListener('input', () => SoundManager.setSfxVolume(sfxSlider.value / 100));
+
+  document.getElementById('settings-btn').addEventListener('click', () => setSoundMenu(true));
+  document.getElementById('settings-close').addEventListener('click', () => setSoundMenu(false));
+  document.getElementById('settings-done').addEventListener('click', () => setSoundMenu(false));
+
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    setSoundMenu(!settingsOpen);
+  });
+
+  function setSoundMenu(open) {
+    settingsOpen = open;
+    layer.classList.toggle('hidden', !open);
+    // The player is frozen while the menu is up (see update()), so cut the
+    // footsteps too — otherwise the walk loop keeps running under the modal.
+    if (open) SoundManager.setWalking(false);
+    else scene.game.canvas.focus();
+  }
 }
 
 // ============================================================
@@ -527,6 +606,8 @@ function checkGoal() {
   finished = true;
   isPaused = true;
   player.body.setVelocity(0, 0);
+  SoundManager.playSfx(SoundManager.SFX.bonus);
+  SoundManager.duckForModal();
   document.getElementById('continue-btn').innerText = 'Restart';
   openEventModal({
     date: '',
@@ -542,8 +623,9 @@ function checkGoal() {
 function update() {
   if (!worldData || !player || !player.body) return;
 
-  if (isPaused) {
+  if (isPaused || settingsOpen) {
     player.body.setVelocityX(0);
+    SoundManager.setWalking(false);
     return;
   }
 
@@ -565,6 +647,17 @@ function update() {
     player.body.setVelocityY(jumpVelocity);
     lastGroundedAt = 0; // spend the coyote window so one press is one jump
     grounded = false;   // switch to the jump pose on this frame, not the next
+
+    // ...and clear the contact flags, or the coyote reset above is wasted.
+    // update() runs BEFORE the physics step, so blocked/touching still describe
+    // the previous step: on the very next frame isGrounded() short-circuits on
+    // them and returns true even though we are already rising, and the jump
+    // fires a second time ~one frame later. That doubled the impulse (a higher
+    // jump than jumpVelocity asks for) long before there was a sound on it.
+    player.body.blocked.down = false;
+    player.body.touching.down = false;
+
+    SoundManager.playSfx(SoundManager.SFX.jump);
   }
 
   if (player.anims && hasAsset('player_idle')) {
@@ -572,6 +665,10 @@ function update() {
     else if (player.body.velocity.x !== 0) setPlayerState('walk');
     else setPlayerState('idle');
   }
+
+  // Same condition as the walk pose above, minus the sprite requirement — the
+  // footsteps should sound even while the player is still a placeholder rect.
+  SoundManager.setWalking(grounded && player.body.velocity.x !== 0);
 
   updateZones();
   checkGoal();

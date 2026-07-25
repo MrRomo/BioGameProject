@@ -101,3 +101,40 @@ body, html {
   transition: background 0.3s, transform 0.1s;
 }
 #start-btn:hover { background: #388E3C; transform: translateY(-2px); }
+
+/* ---------- Sound settings (Phase 8) ---------- */
+/* Gear sits above the canvas and the zone caption, under the modals. */
+#settings-btn {
+  position: absolute; top: 16px; right: 16px;
+  z-index: 6;
+  width: 44px; height: 44px;
+  border: none; border-radius: 50%;
+  background: rgba(0,0,0,0.45); color: #fff;
+  font-size: 22px; line-height: 1; cursor: pointer;
+  transition: background 0.3s, transform 0.1s;
+}
+#settings-btn:hover { background: rgba(0,0,0,0.7); transform: scale(1.08); }
+#settings-btn:active { transform: scale(1); }
+
+/* Same overlay treatment as #ui-layer, one step higher so it can be opened
+   while an event modal is showing. `.hidden` is per-element in this file — this
+   rule is what actually hides the menu. */
+#settings-layer {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 15;
+  display: flex; justify-content: center; align-items: center;
+}
+#settings-layer.hidden { display: none; }
+#settings-layer .modal { max-width: 380px; }
+
+.slider-row {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 18px;
+  color: #555; font-size: 16px;
+}
+.slider-row > span { width: 70px; text-align: left; }
+.slider-row input[type="range"] {
+  flex: 1; accent-color: #4CAF50; cursor: pointer;
+}

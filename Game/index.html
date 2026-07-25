@@ -27,13 +27,33 @@
     </div>
   </div>
 
+  <!-- Sound settings (Phase 8) — gear sits above the game, below the modals -->
+  <button id="settings-btn" type="button" title="Sound settings" aria-label="Sound settings">⚙</button>
+
+  <div id="settings-layer" class="hidden">
+    <div class="modal">
+      <span id="settings-close" class="close">&times;</span>
+      <h2>Sound</h2>
+      <label class="slider-row" for="music-vol">
+        <span>Music</span>
+        <input type="range" id="music-vol" min="0" max="100" step="1">
+      </label>
+      <label class="slider-row" for="sfx-vol">
+        <span>Effects</span>
+        <input type="range" id="sfx-vol" min="0" max="100" step="1">
+      </label>
+      <button id="settings-done" type="button">Close</button>
+    </div>
+  </div>
+
   <!-- Intro title card (Phase 8) -->
   <div id="title-card">
     <h1 id="title-heading">My Life Story</h1>
-    <p id="title-sub">Use the arrow keys to walk, Up/Space to jump.</p>
+    <p id="title-sub">Use the arrow keys to walk, Up/Space to jump. Press Esc for sound settings.</p>
     <button id="start-btn">Begin ▶</button>
   </div>
 
+  <script src="sound_manager.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
