@@ -251,7 +251,7 @@ lives in `SURFACE_SFX` in `sound_manager.js`; **an unlisted scenery type falls b
 instance started/stopped on the walk transition (`FOOTSTEP_MODE = 'loop'`), because the two recordings
 are very different lengths and no one step interval fits both.
 
-**Music vs. modals:** `hitMilestone()` calls `duckForModal()` — music fades out over 400 ms and
+**Music vs. modals:** `enterMilestone()` calls `duckForModal()` — music fades out over 400 ms and
 *pauses*; `closeModal()` calls `unduckAfterModal()`, which resumes from the same position and fades back
 in. So the modal is read in silence without the track restarting.
 

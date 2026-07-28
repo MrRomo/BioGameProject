@@ -23,6 +23,7 @@ const game = new Phaser.Game(config);
 // ---------- Module state ----------
 let scene;                 // active Phaser scene (set in create)
 let player, cursors;
+let milestones;            // the whole group — scanned each frame for enter/exit edges
 let worldData, assetManifest;
 let bgLayers = [];
 let isPaused = false;
@@ -143,13 +144,15 @@ function buildWorld(sceneRef) {
   buildBackground(sceneRef, worldW);
   const platforms = buildScenery(sceneRef);
   player = buildPlayer(sceneRef);
-  const milestones = buildMilestones(sceneRef);
+  milestones = buildMilestones(sceneRef);
 
   sceneRef.cameras.main.startFollow(player, true, 0.08, 0.08);
   sceneRef.cameras.main.setFollowOffset(0, 100 * (worldData.config.worldScale || 1));
 
   sceneRef.physics.add.collider(player, platforms, trackSurface);
-  sceneRef.physics.add.overlap(player, milestones, hitMilestone, null, sceneRef);
+  // Milestones get no physics.add.overlap: that callback fires every frame the
+  // bodies touch, with no notion of leaving again. updateMilestones() derives
+  // the enter/exit edges itself instead.
 
   cursors = sceneRef.input.keyboard.createCursorKeys();
 
@@ -404,6 +407,8 @@ function buildMilestones(sceneRef) {
 
     group.add(obj); // physics body auto-enabled with group defaults above
     obj.eventData = item.event;
+    obj.playerInside = false; // enter/exit edge state, see updateMilestones()
+    obj.visited = false;
 
     sceneRef.tweens.add({
       targets: obj, y: item.y - 15 * s,
@@ -415,12 +420,43 @@ function buildMilestones(sceneRef) {
   return group;
 }
 
-function hitMilestone(_player, obj) {
-  if (isPaused || settingsOpen) return; // anti-rebounce / not while the sound menu is up
+// Milestones stay in the world once triggered — they're landmarks of the story,
+// not pickups to collect — and their story stays re-readable: walking back into
+// one opens its modal again. That's what makes the edge-triggering essential.
+// The modal opens on the frame the player *enters* an icon and that icon can't
+// open again until they have walked back out, so closing the modal while still
+// standing on the icon leaves it closed instead of instantly reopening it.
+function updateMilestones() {
+  milestones.getChildren().forEach(obj => {
+    const inside = overlapsPlayer(obj);
+    if (inside && !obj.playerInside) enterMilestone(obj);
+    obj.playerInside = inside;
+  });
+}
+
+// Plain AABB against the same Arcade bodies the old physics.add.overlap() used,
+// so the trigger area itself is unchanged.
+function overlapsPlayer(obj) {
+  const a = player.body, b = obj.body;
+  if (!a || !b) return false;
+  return a.right > b.x && a.x < b.right && a.bottom > b.y && a.y < b.bottom;
+}
+
+const VISITED_ALPHA = 0.45;
+
+// No isPaused/settingsOpen guard here: update() returns early in both states,
+// so updateMilestones() — and therefore this — only ever runs during play.
+function enterMilestone(obj) {
+  // Every fresh entry reopens the modal — a milestone the player walks back to
+  // tells its story again. `consume` survives from the pickup-style version but
+  // is now purely cosmetic: `true` (the default) dims the icon once its story
+  // has been read, marking it as visited without ever locking it; `false` keeps
+  // it at full brightness. Neither value stops the modal from reopening.
+  if (!obj.visited && obj.eventData?.consume !== false) obj.setAlpha(VISITED_ALPHA);
+  obj.visited = true;
+
   isPaused = true;
   player.body.setVelocity(0, 0);
-  if (obj.eventData?.consume !== false) obj.destroy();
-
   SoundManager.playSfx(SoundManager.SFX.bonus);
   SoundManager.duckForModal();
   openEventModal(obj.eventData);
@@ -585,7 +621,16 @@ function carouselStep(delta) {
 function closeModal() {
   document.getElementById('ui-layer').classList.add('hidden');
   SoundManager.unduckAfterModal();
-  setTimeout(() => { isPaused = false; }, 100); // avoid instant re-trigger
+
+  // Focus goes back to the canvas so the arrow keys drive the player again
+  // instead of the (now hidden) button that was just clicked — a still-focused
+  // button would otherwise also swallow the next Enter press.
+  if (scene) scene.game.canvas.focus();
+
+  // Resumes immediately: the old 100ms delay existed only to stop the milestone
+  // the player is standing on from firing again, which updateMilestones()'
+  // enter/exit tracking now rules out outright.
+  isPaused = false;
 }
 
 // Shared by the Continue/close buttons and the Enter key below — "The End"
@@ -610,10 +655,14 @@ function wireDomUI(sceneRef) {
   // Enter closes the event modal (or restarts, at "The End") without reaching
   // for the mouse. Guarded on the modal actually being open, and skipped while
   // the sound settings layer is up so it doesn't fire through that instead.
+  // e.repeat is ignored so holding the key can't run the close (or a reload)
+  // over and over; preventDefault stops the browser from *also* activating a
+  // still-focused button with the same press.
   document.addEventListener('keydown', e => {
-    if (e.key !== 'Enter') return;
+    if (e.key !== 'Enter' || e.repeat) return;
     if (settingsOpen) return;
     if (document.getElementById('ui-layer').classList.contains('hidden')) return;
+    e.preventDefault();
     continueOrRestart();
   });
 
@@ -742,6 +791,7 @@ function update() {
   // footsteps should sound even while the player is still a placeholder rect.
   SoundManager.setWalking(grounded && player.body.velocity.x !== 0);
 
+  updateMilestones();
   updateZones();
   checkGoal();
 }

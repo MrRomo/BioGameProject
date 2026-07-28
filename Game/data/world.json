@@ -489,7 +489,7 @@
             "path": "assets/images/events/sinfonia/02.png",
             "caption": "El equipo que clasificó para representar a Colombia en la RoboCup."
           },
-            {
+          {
             "path": "assets/images/events/sinfonia/03.png",
             "caption": "El Steve bueno: conocimos a Steve Wozniak y terminamos hablando de arquitectura de procesadores y RISC-V. Ese día dejé de ver la industria como algo lejano."
           }
@@ -538,7 +538,7 @@
           {
             "path": "assets/images/events/coordinadora/01.png",
             "caption": "De junior a líder técnico en tres años: APIs con TypeScript y PostgreSQL, y después la migración a microservicios con Node.js, Fastify y Kubernetes."
-          }        
+          }
         ],
         "trigger": "overlap",
         "consume": true,
@@ -635,7 +635,6 @@
             "path": "assets/images/events/ricardo-viajero/04.png",
             "caption": "Perú (2025): Machu Picchu, la cultura andina y, seamos honestos, la comida."
           },
-
           {
             "path": "assets/images/events/ricardo-viajero/04_1.png",
             "caption": "Perú (2025): Machu Picchu, la cultura andina y, seamos honestos, la comida."
@@ -646,6 +645,10 @@
           },
           {
             "path": "assets/images/events/ricardo-viajero/05_1.png",
+            "caption": "Brasil (2026): el más reciente con el grupo. En la lista pendiente están México y Argentina."
+          },
+          {
+            "path": "assets/images/events/ricardo-viajero/05_2.png",
             "caption": "Brasil (2026): el más reciente con el grupo. En la lista pendiente están México y Argentina."
           }
         ],
@@ -666,14 +669,15 @@
         "text": "El primer viaje de mi mamá en avion y el primero fuera del país. Poder pagarle ese tiquete es, con diferencia, el logro del que más orgulloso estoy de toda esta presentación. Todo lo demás fue camino para llegar aquí.",
         "images": [
           {
-            "path": "assets/images/events/viaje-mama/00.jpg",
+            "path": "assets/images/events/viaje-mama/00.png",
             "caption": "Ipiales - Pasto: la primera vez que viaja en avion y visita el santuario de las lajas de Ipiales. El aire es frío y la vista es hermosa."
-          }, {
-            "path": "assets/images/events/viaje-mama/01.jpg",
-            "caption": "España: el primer sello en su pasaporte."
           },
           {
-            "path": "assets/images/events/viaje-mama/02.jpg",
+            "path": "assets/images/events/viaje-mama/01.png",
+            "caption": "España: el primer sello en su pasaporte. Conocio barcelona."
+          },
+          {
+            "path": "assets/images/events/viaje-mama/02.png",
             "caption": "Italia: el Vaticano, las iglesias y Venecia. Mi mamá es muy católica, así que para ella no era turismo — era otra cosa."
           }
         ],
@@ -694,12 +698,11 @@
         "text": "Nos conocemos desde el colegio. Perdimos el contacto por años, la vida nos volvió a cruzar y llevamos poco más de dos años juntos. Me gusta esa historia porque se parece a todo lo demás que les he contado: las cosas buenas casi nunca llegan en línea recta.",
         "images": [
           {
-            "path": "assets/images/events/mi-pareja/01.jpg",
+            "path": "assets/images/events/mi-pareja/01.png",
             "caption": "Del colegio a hoy, con una pausa de varios años en el medio."
           },
           {
-            "path": "assets/images/events/mi-pareja/02.jpg",
-            "caption": "República Dominicana (julio 2026): primer viaje como pareja y la confirmación de que viajamos bien juntos, que no es poca cosa."
+            "path": "assets/images/events/mi-pareja/02.png"
           }
         ],
         "trigger": "overlap",
@@ -715,16 +718,12 @@
         "id": "aventurero",
         "zone": "fuera-del-computador",
         "date": "",
-        "title": "Ricardo Aventurero",
-        "text": "Me gusta la adrenalina en dosis razonables: parapente, buggy, todo lo que se sienta divertido sin ser temerario. Mi criterio es sencillo: si la historia se puede contar después, valió la pena.",
+        "title": "Ricardo en eventos",
+        "text": "Me gusta ir a eventos de tecnologia y programacion. Ahi conozco muchos personajes interesantes.",
         "images": [
           {
-            "path": "assets/images/events/aventurero/01.jpg",
-            "caption": "Parapente y buggy: adrenalina con criterio."
-          },
-          {
-            "path": "assets/images/events/aventurero/02.jpg",
-            "caption": "El resto del tiempo libre: microcontroladores en la mesa del comedor, divulgación científica y planear el próximo viaje. [AJUSTAR: agrega o quita lo que aplique]"
+            "path": "assets/images/events/ricardo-viajero/06.png",
+            "caption": "Sebastian Ramirez: creador de FastAPI, el framework de Python más popular. Freddy Vega: Confundador de Platzi. Midudev: ingeniero, streamer y uno de los voceros de la comunidad mas grandes"
           }
         ],
         "trigger": "overlap",
@@ -745,32 +744,11 @@
         "images": [
           {
             "path": "assets/images/events/para-donde-voy/01.jpg",
-            "caption": "Medellín (agosto 2026): la primera ciudad que elijo por gusto y no por trabajo."
+            "caption": "Enero de 2027, los países nórdicos. La meta concreta es ver una aurora boreal — esta foto la pongo cuando vuelva."
           },
           {
             "path": "assets/images/events/para-donde-voy/02.jpg",
-            "caption": "Enero de 2027, los países nórdicos. La meta concreta es ver una aurora boreal — esta foto la pongo cuando vuelva."
-          }
-        ],
-        "trigger": "overlap",
-        "consume": true,
-        "pauseGame": true
-      }
-    },
-    {
-      "x": 25600,
-      "y": 500,
-      "icon": "trophy",
-      "event": {
-        "id": "cierre",
-        "zone": "para-donde-voy",
-        "date": "",
-        "title": "En resumen",
-        "text": "Vengo de un pueblo del Magdalena, estudié electrónica, aprendí a programar solo en plena pandemia, lideré un proyecto nacional, hoy escribo software para clientes en Chile y Reino Unido, y sigo vendiendo hielo en mi tierra. Si tuviera que resumirlo en una frase: me gusta entender cómo funcionan las cosas por dentro y después arreglarlas. Gracias.",
-        "images": [
-          {
-            "path": "assets/images/events/cierre/01.jpg",
-            "caption": "Hacia dónde va el trabajo: arquitectura y liderazgo técnico, IA generativa con agentes que ejecuten de verdad, e IoT aplicado al agro colombiano. Atenalink es donde junto las tres."
+            "caption": "Medellín (agosto 2026): la primera ciudad que elijo por gusto y no por trabajo."
           }
         ],
         "trigger": "overlap",
