@@ -21,7 +21,15 @@
       <span id="close-btn" class="close">&times;</span>
       <span id="modal-date" class="date"></span>
       <h2 id="modal-title"></h2>
-      <img id="modal-img" src="" alt="Life event" style="display:none;">
+      <div id="modal-carousel" class="carousel" style="display:none;">
+        <div class="carousel-viewport">
+          <img id="carousel-img" class="carousel-img" src="" alt="Life event">
+          <button id="carousel-prev" type="button" class="carousel-arrow prev" aria-label="Previous image">&#10094;</button>
+          <button id="carousel-next" type="button" class="carousel-arrow next" aria-label="Next image">&#10095;</button>
+        </div>
+        <p id="carousel-caption" class="carousel-caption"></p>
+        <div id="carousel-dots" class="carousel-dots"></div>
+      </div>
       <p id="modal-text"></p>
       <button id="continue-btn">Continue Journey</button>
     </div>

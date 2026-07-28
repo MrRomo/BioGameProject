@@ -17,27 +17,60 @@ pairs with [phase-5-transitions-darkzones.md](phase-5-transitions-darkzones.md)
 ---
 
 ## Deliverables
-- [ ] `openEventModal(data)` populating the DOM modal from an event payload.
-- [ ] `closeModal()` hiding it and un-pausing (with the anti-double-fire delay).
-- [ ] `popIn` entrance animation.
+- [x] `openEventModal(data)` populating the DOM modal from an event payload.
+- [x] `closeModal()` hiding it and un-pausing (with the anti-double-fire delay).
+- [x] `popIn` entrance animation.
+- [x] Image carousel: `event.images[]`, each slide with its own caption; Prev/Next arrows + dots
+      auto-hide for a single slide. `event.imagePath` (legacy, one image, no caption) still works.
 - [ ] Optional HUD: current year/age + progress bar.
 - [ ] Optional timeline strip highlighting the current milestone.
 
 ---
 
-## 1. Modal open/close (from prototype)
+## 1. Modal open/close + carousel (current implementation)
 
 ```js
+let carouselSlides = [];
+let carouselIndex = 0;
+
 function openEventModal(data) {
   document.getElementById('modal-date').innerText  = data.date  || '';
   document.getElementById('modal-title').innerText = data.title || '';
   document.getElementById('modal-text').innerText  = data.text  || '';
 
-  const img = document.getElementById('modal-img');
-  if (data.imagePath) { img.src = data.imagePath; img.style.display = 'block'; }
-  else                { img.style.display = 'none'; }
+  // Preferred: images[] = [{ path, caption }, ...]. imagePath (single string)
+  // still works, as a one-slide gallery with no caption.
+  carouselSlides = (data.images && data.images.length)
+    ? data.images
+    : (data.imagePath ? [{ path: data.imagePath, caption: data.imageCaption || '' }] : []);
+  carouselIndex = 0;
+  renderCarousel();
 
   document.getElementById('ui-layer').classList.remove('hidden'); // triggers popIn
+}
+
+function renderCarousel() {
+  const wrap = document.getElementById('modal-carousel');
+  if (carouselSlides.length === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+
+  const slide = carouselSlides[carouselIndex];
+  document.getElementById('carousel-img').src = slide.path;
+
+  const caption = document.getElementById('carousel-caption');
+  caption.innerText = slide.caption || '';
+  caption.style.display = slide.caption ? 'block' : 'none';
+
+  const multi = carouselSlides.length > 1;              // nav is pointless with one slide
+  document.getElementById('carousel-prev').style.display = multi ? 'flex' : 'none';
+  document.getElementById('carousel-next').style.display = multi ? 'flex' : 'none';
+  // ...dots rebuilt the same way, one per slide, click-to-jump — see game.js.
+}
+
+function carouselStep(delta) {
+  if (carouselSlides.length < 2) return;
+  carouselIndex = (carouselIndex + delta + carouselSlides.length) % carouselSlides.length;
+  renderCarousel();
 }
 
 function closeModal() {
@@ -50,7 +83,12 @@ Wire buttons once in `create()`:
 ```js
 document.getElementById('continue-btn').addEventListener('click', closeModal);
 document.getElementById('close-btn').addEventListener('click', closeModal);
+document.getElementById('carousel-prev').addEventListener('click', () => carouselStep(-1));
+document.getElementById('carousel-next').addEventListener('click', () => carouselStep(1));
 ```
+
+Left/Right arrow keys also step the carousel, but only while the modal is open — see `wireCarousel()`
+in game.js. They're the player's movement keys the rest of the time.
 
 ---
 
@@ -73,8 +111,8 @@ document.getElementById('close-btn').addEventListener('click', closeModal);
 - **HUD:** a fixed DOM strip showing the "current year" derived from the nearest passed milestone.
 - **Timeline:** a horizontal strip of dots (one per milestone) with the active one highlighted, matching the
   timeline concept in [README.md](README.md).
-- **Gallery / video / audio:** the modal's `<img>` can be swapped for a small gallery or `<video>` when an
-  event provides `images[]` / `video` (see the event schema in the README).
+- **Video / audio:** the modal's carousel slide could be swapped for a `<video>`/`<audio>` embed when an
+  event provides one — not yet implemented, `images[]` (the photo carousel) is done, see above.
 
 ---
 
@@ -94,8 +132,10 @@ Most UI is CSS, but these image slots are reserved for a themed look:
 ---
 
 ## Acceptance criteria
-- [ ] Triggering a milestone opens the modal with its date/title/text/image.
-- [ ] The modal animates in with `popIn`.
-- [ ] "Continue"/close hides it and movement resumes after the short delay.
-- [ ] Events with no image hide the `<img>` cleanly.
-- [ ] Gameplay is frozen while the modal is open.
+- [x] Triggering a milestone opens the modal with its date/title/text/image(s).
+- [x] The modal animates in with `popIn`.
+- [x] "Continue"/close hides it and movement resumes after the short delay.
+- [x] Events with no image hide the carousel cleanly.
+- [x] Events with 2+ `images[]` show Prev/Next arrows, dots, and per-slide captions; arrows/dots hide
+      for a single slide.
+- [x] Gameplay is frozen while the modal is open.

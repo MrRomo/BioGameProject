@@ -30,7 +30,10 @@ Extends the prototype's `milestones[].modalData`:
         "date": "January 2018",
         "title": "My first job",
         "text": "Where my professional adventure began...",
-        "imagePath": "assets/images/events/first_job.jpg",
+        "images": [
+          { "path": "assets/images/events/first_job_1.jpg", "caption": "First day at the office" },
+          { "path": "assets/images/events/first_job_2.jpg", "caption": "The team, six months in" }
+        ],
         "trigger": "overlap",
         "consume": true,
         "pauseGame": true
@@ -40,7 +43,9 @@ Extends the prototype's `milestones[].modalData`:
 }
 ```
 
-`icon` selects the sprite/placeholder; `event` is handed verbatim to the modal.
+`icon` selects the sprite/placeholder; `event` is handed verbatim to the modal. `images[]` (each with its
+own `caption`) drives the modal's carousel — see [phase-6-ui-modals.md](phase-6-ui-modals.md). The older
+single-string `imagePath` still works as a one-slide gallery for events that don't need one.
 
 ---
 

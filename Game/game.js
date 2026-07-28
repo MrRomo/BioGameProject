@@ -524,15 +524,62 @@ function openEventModal(data) {
   document.getElementById('modal-title').innerText = data.title || '';
   document.getElementById('modal-text').innerText = data.text || '';
 
-  const img = document.getElementById('modal-img');
-  if (data.imagePath) {
-    img.src = data.imagePath;
-    img.style.display = 'block';
-  } else {
-    img.style.display = 'none';
-  }
+  // Preferred: event.images = [{ path, caption }, ...] — one modal, several
+  // captioned slides. event.imagePath (single string, Phase 4 schema) still
+  // works and is treated as a one-slide gallery, so existing world.json
+  // entries don't need migrating.
+  carouselSlides = (data.images && data.images.length)
+    ? data.images
+    : (data.imagePath ? [{ path: data.imagePath, caption: data.imageCaption || '' }] : []);
+  carouselIndex = 0;
+  renderCarousel();
 
   document.getElementById('ui-layer').classList.remove('hidden');
+}
+
+// ---------- Image carousel (Phase 6 extension) ----------
+let carouselSlides = [];
+let carouselIndex = 0;
+
+function renderCarousel() {
+  const wrap = document.getElementById('modal-carousel');
+  if (carouselSlides.length === 0) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'block';
+
+  const slide = carouselSlides[carouselIndex];
+  const img = document.getElementById('carousel-img');
+  img.src = slide.path;
+  img.alt = slide.caption || 'Life event';
+
+  const caption = document.getElementById('carousel-caption');
+  caption.innerText = slide.caption || '';
+  caption.style.display = slide.caption ? 'block' : 'none';
+
+  // Nav controls are pointless with a single slide, so they hide together.
+  const multi = carouselSlides.length > 1;
+  document.getElementById('carousel-prev').style.display = multi ? 'flex' : 'none';
+  document.getElementById('carousel-next').style.display = multi ? 'flex' : 'none';
+
+  const dots = document.getElementById('carousel-dots');
+  dots.style.display = multi ? 'flex' : 'none';
+  dots.innerHTML = '';
+  if (multi) {
+    carouselSlides.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = 'carousel-dot' + (i === carouselIndex ? ' active' : '');
+      dot.addEventListener('click', () => { carouselIndex = i; renderCarousel(); });
+      dots.appendChild(dot);
+    });
+  }
+}
+
+function carouselStep(delta) {
+  if (carouselSlides.length < 2) return;
+  carouselIndex = (carouselIndex + delta + carouselSlides.length) % carouselSlides.length;
+  renderCarousel();
 }
 
 function closeModal() {
@@ -559,7 +606,21 @@ function wireDomUI(sceneRef) {
     closeModal();
   });
 
+  wireCarousel();
   wireSoundMenu();
+}
+
+function wireCarousel() {
+  document.getElementById('carousel-prev').addEventListener('click', () => carouselStep(-1));
+  document.getElementById('carousel-next').addEventListener('click', () => carouselStep(1));
+
+  // Left/Right only steps the carousel while the event modal is actually open —
+  // otherwise these are the player's movement keys.
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('ui-layer').classList.contains('hidden')) return;
+    if (e.key === 'ArrowLeft') carouselStep(-1);
+    else if (e.key === 'ArrowRight') carouselStep(1);
+  });
 }
 
 // ---------- Sound settings menu (Phase 8) ----------

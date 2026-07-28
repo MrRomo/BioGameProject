@@ -77,10 +77,13 @@
       "x": 1000, "y": 300, "icon": "star",
       "event": {
         "id": "education",
-        "date": "TODO — Year",
-        "title": "TODO — Education",
-        "text": "Replace this text with details about your education or early growth.",
-        "imagePath": "",
+        "date": "Julio 2019",
+        "title": "El dia que conocimos al steve bueno",
+        "text": "en 2019 en la robocup conocimos a Steve Wosniak, el padre de los computadores, y nos conocimos por primera vez en el mundo.",
+        "images": [
+          { "path": "/assets/images/events/2019/wosniak.jpg", "caption": "Con Steve Wozniak en la RoboCup, 2019444" },
+          { "path": "/assets/images/events/2019/wosniak.jpg", "caption": "Con Steve Wozniak en la RoboCup, 2019" }
+        ],
         "trigger": "overlap",
         "consume": true,
         "pauseGame": true

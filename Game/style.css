@@ -68,17 +68,61 @@ body, html {
   text-transform: uppercase; font-size: 14px; margin-bottom: 5px;
 }
 .modal h2 { margin: 10px 0 20px 0; color: #222; font-size: 24px; }
-.modal img { max-width: 100%; border-radius: 8px; margin-bottom: 20px; }
 .modal p { color: #555; line-height: 1.6; font-size: 16px; margin-bottom: 25px; }
 
-.modal button {
+/* ---------- Image carousel (modal, milestone galleries) ---------- */
+#modal-carousel { margin-bottom: 20px; }
+
+.carousel-viewport {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #eee;
+}
+.carousel-img {
+  display: block; width: 100%; max-height: 720px;
+  object-fit: cover;
+}
+
+.carousel-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 34px; height: 34px; border: none; border-radius: 50%;
+  background: rgba(0,0,0,0.45); color: #fff;
+  font-size: 15px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.1s;
+}
+.carousel-arrow:hover { background: rgba(0,0,0,0.7); }
+.carousel-arrow:active { transform: translateY(-50%) scale(0.92); }
+.carousel-arrow.prev { left: 8px; }
+.carousel-arrow.next { right: 8px; }
+
+.carousel-caption {
+  margin: 10px 0 0 0; color: #777; font-size: 14px; font-style: italic;
+}
+
+.carousel-dots {
+  display: flex; justify-content: center; gap: 8px; margin-top: 10px;
+}
+.carousel-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #ccc; cursor: pointer; transition: background 0.2s, transform 0.2s;
+}
+.carousel-dot:hover { background: #999; }
+.carousel-dot.active { background: #4CAF50; transform: scale(1.3); }
+
+/* :not(.carousel-arrow) keeps this generic button skin off the carousel's
+   round nav buttons — otherwise its higher specificity (class+type beats
+   .carousel-arrow's class-only) overwrites their width/shape/position and
+   the :hover/:active transforms fight over the same `transform` property. */
+.modal button:not(.carousel-arrow) {
   background: #4CAF50; color: white; border: none;
   padding: 12px 24px; border-radius: 8px; cursor: pointer;
   font-size: 16px; font-weight: bold; width: 100%;
   transition: background 0.3s, transform 0.1s;
 }
-.modal button:hover { background: #388E3C; transform: translateY(-2px); }
-.modal button:active { transform: translateY(0); }
+.modal button:not(.carousel-arrow):hover { background: #388E3C; transform: translateY(-2px); }
+.modal button:not(.carousel-arrow):active { transform: translateY(0); }
 
 /* ---------- Intro title card (Phase 8) ---------- */
 #title-card {

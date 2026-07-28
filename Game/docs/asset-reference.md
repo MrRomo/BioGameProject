@@ -197,19 +197,21 @@ about tinting the sky layer or overlaying a fading dark rect instead once real s
 ## Event images — `assets/images/events/` (not manifest-driven)
 
 Unlike everything above, event images are **not** registered in `assets.json` and **not** preloaded by
-Phaser. `openEventModal()` (game.js:272-286) sets them directly as a DOM `<img>` source:
+Phaser. `openEventModal()` sets them directly as a DOM `<img>` source, one slide of a small carousel:
 
 ```js
-img.src = data.imagePath;   // plain browser fetch, happens when the modal opens
+img.src = slide.path;   // plain browser fetch, happens when the modal opens / the carousel steps
 ```
 
 | Where it's set | Field | Behavior |
 |------------------|-------|----------|
-| `world.json` → `milestones[].event.imagePath` | any path or URL | if truthy, `<img>` shown; if empty string, `<img>` hidden entirely |
+| `world.json` → `milestones[].event.images` | `[{ path, caption }, ...]` | preferred: one slide per entry, each with its own caption. Nav arrows/dots appear only with 2+ slides. |
+| `world.json` → `milestones[].event.imagePath` | any path or URL | legacy single-image form, still supported; treated as a one-slide gallery with no caption. Ignored if `images` is also set. |
 
-**Convention:** put files under `assets/images/events/<event-id>.jpg` and reference that path in the
-matching milestone's `event.imagePath`. All 5 sample milestones in `world.json` currently ship with
-`imagePath: ""` (image hidden) and `title`/`text` marked `TODO`.
+**Convention:** put files under `assets/images/events/<event-id>/` (or flat under `assets/images/events/`)
+and reference them from the matching milestone's `event.images`. The `education` milestone in `world.json`
+is the live example (`assets/images/events/2019/wosniak.jpg`); the other sample milestones still ship with
+`imagePath: ""` (carousel hidden entirely) and `title`/`text` marked `TODO`.
 
 ---
 
@@ -291,6 +293,7 @@ See [phase-8-polish-presentation.md](phase-8-polish-presentation.md) for the res
 | **Add a brand-new milestone icon** (e.g. `"diploma"`) | Use `"icon": "diploma"` in a milestone; add `diploma: 0x...` to `ICON_PLACEHOLDER_COLOR` (game.js:193); optionally add `icon_diploma` to `assets.json` → `icons`. |
 | **Add a parallax background layer** | Add an entry to `world.json` → `background[]` with a new `key` + `parallax` value; add that same key to `assets.json` → `backgrounds`. |
 | **Add a photo to a milestone's modal** | Put the file in `assets/images/events/`, set `event.imagePath` in `world.json` to that path. No manifest entry needed. |
+| **Add a photo carousel (multiple images) to a milestone's modal** | Put the files in `assets/images/events/`, set `event.images` in `world.json` to `[{ "path": "...", "caption": "..." }, ...]`. Prev/Next arrows and dots appear automatically for 2+ slides. |
 | **Give the player a walk cycle** | Provide a horizontal spritesheet, set `frameWidth`/`frameHeight` in the `assets.json` entry for `player_walk` to match one frame's dimensions. |
 
 ---
