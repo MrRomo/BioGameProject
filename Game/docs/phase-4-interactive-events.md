@@ -8,10 +8,11 @@ life-event when the player overlaps them. This is the storytelling core.
 ---
 
 ## Deliverables
-- [ ] Milestones spawned from the `milestones` array with per-item event data attached.
-- [ ] Floating tween on each milestone (prototype behavior).
-- [ ] `overlap(player, milestones, hitMilestone)` firing the event exactly once.
-- [ ] Event payload passed to the UI layer (Phase 6 renders it).
+- [x] Milestones spawned from the `milestones` array with per-item event data attached.
+- [x] Floating tween on each milestone (prototype behavior).
+- [x] Enter/exit edge detection firing the event exactly once per entry; milestones are never destroyed
+      and re-entering one replays its story.
+- [x] Event payload passed to the UI layer (Phase 6 renders it).
 - [ ] Each milestone icon exposed as a **Sprite Slot**.
 
 ---
@@ -66,27 +67,51 @@ levelData.milestones.forEach(item => {
   }
   milestones.add(obj);
   obj.eventData = item.event;                           // attach payload
+  obj.playerInside = false;                             // enter/exit edge state
+  obj.visited = false;
 
   this.tweens.add({ targets: obj, y: item.y - 15, duration: 1500,
                     ease: 'Sine.inOut', yoyo: true, repeat: -1 });
 });
-
-this.physics.add.overlap(player, milestones, hitMilestone, null, this);
 ```
+
+Note there is **no** `physics.add.overlap(...)` for milestones — see below for why.
 
 ---
 
-## 3. Trigger handler
+## 3. Trigger handler — enter/exit edges
+
+Milestones are landmarks, not pickups: they are **never destroyed**, so they stay visible on the map after
+their story has been told, and walking back into one **reopens its modal**. Re-readable stories are exactly
+what rules out `physics.add.overlap()`, whose callback fires every frame the bodies touch with no notion of
+leaving again — closing the modal while still standing on an icon would reopen it instantly, forever. The
+overlap is derived in `update()` instead, so an "enter" is a real edge:
 
 ```js
-function hitMilestone(player, obj) {
-  if (isPaused) return;                 // anti-rebounce
+function updateMilestones() {
+  milestones.getChildren().forEach(obj => {
+    const inside = overlapsPlayer(obj);                  // plain AABB on the bodies
+    if (inside && !obj.playerInside) enterMilestone(obj);
+    obj.playerInside = inside;                           // ...must exit before firing again
+  });
+}
+
+function enterMilestone(obj) {
+  if (!obj.visited && obj.eventData?.consume !== false) obj.setAlpha(0.45);  // dimmed = already read
+  obj.visited = true;
   isPaused = true;
   player.body.setVelocity(0, 0);
-  if (obj.eventData.consume !== false) obj.destroy();
-  openEventModal(obj.eventData);        // Phase 6
+  openEventModal(obj.eventData);         // Phase 6
 }
 ```
+
+`consume` survives from the pickup-style version but is now **purely cosmetic** — nothing stops a modal
+from reopening:
+
+| `consume` | Behavior |
+|-----------|----------|
+| `true` (default) | Dims the icon to `0.45` alpha once its story has been read, marking it visited. Still replays on every re-entry. |
+| `false` | Never dims — stays at full brightness. Replays on every re-entry. |
 
 > `openEventModal` is the seam into Phase 6. In the prototype it directly writes to the DOM; keep that,
 > but route through one function so the UI can evolve independently.
@@ -105,12 +130,16 @@ function hitMilestone(player, obj) {
 | Photo frame | `icon_photo` | `assets/sprites/icons/____.png` | 48×48 | ⬜ white square | ⬜ |
 
 **Event images** (shown inside the modal, not on the map) live in `assets/images/events/` and are referenced
-per-event by `event.imagePath` — no fixed key needed.
+per-event by `event.images[]` (or the older single `event.imagePath`) — no fixed key needed.
 
 ---
 
 ## Acceptance criteria
-- [ ] Milestones appear at their JSON coordinates and bob up/down.
-- [ ] Walking into one fires the event **once**.
-- [ ] The correct payload reaches the modal function.
-- [ ] Adding a milestone in JSON needs no code change.
+- [x] Milestones appear at their JSON coordinates and bob up/down.
+- [x] Walking into one fires the event **once per entry**.
+- [x] The milestone stays visible after firing (dimmed when `consume: true`), never disappears.
+- [x] Closing the modal while still standing on the icon does **not** reopen it — the player has to walk
+      out and back in.
+- [x] Walking back into an already-read milestone **does** reopen its modal.
+- [x] The correct payload reaches the modal function.
+- [x] Adding a milestone in JSON needs no code change.
