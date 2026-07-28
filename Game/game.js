@@ -588,6 +588,13 @@ function closeModal() {
   setTimeout(() => { isPaused = false; }, 100); // avoid instant re-trigger
 }
 
+// Shared by the Continue/close buttons and the Enter key below — "The End"
+// modal repurposes the same button as Restart instead of Continue.
+function continueOrRestart() {
+  if (finished) { location.reload(); return; }
+  closeModal();
+}
+
 function wireDomUI(sceneRef) {
   document.getElementById('start-btn').addEventListener('click', () => {
     document.getElementById('title-card').classList.add('hidden');
@@ -597,13 +604,17 @@ function wireDomUI(sceneRef) {
     sceneRef.game.canvas.focus();
   });
 
-  document.getElementById('continue-btn').addEventListener('click', () => {
-    if (finished) { location.reload(); return; }
-    closeModal();
-  });
-  document.getElementById('close-btn').addEventListener('click', () => {
-    if (finished) { location.reload(); return; }
-    closeModal();
+  document.getElementById('continue-btn').addEventListener('click', continueOrRestart);
+  document.getElementById('close-btn').addEventListener('click', continueOrRestart);
+
+  // Enter closes the event modal (or restarts, at "The End") without reaching
+  // for the mouse. Guarded on the modal actually being open, and skipped while
+  // the sound settings layer is up so it doesn't fire through that instead.
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    if (settingsOpen) return;
+    if (document.getElementById('ui-layer').classList.contains('hidden')) return;
+    continueOrRestart();
   });
 
   wireCarousel();

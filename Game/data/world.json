@@ -1,88 +1,386 @@
 {
+  "_comment": "Historia de vida de Ricardo Romo. 21 hitos agrupados en 9 zonas (una por sección de la presentación). Las sub-historias viven en event.images[].caption. Faltan los archivos de foto: cada hito espera assets/images/events/<id>/01.jpg, 02.jpg, ...",
   "config": {
     "worldWidth": 40000,
     "gravity": 800,
-    "playerSpeed": 300,
+    "playerSpeed": 900,
     "jumpVelocity": -550,
-    "playerStart": { "x": 100, "y": 300 },
-    "goalX": 12000,
+    "playerStart": {
+      "x": 100,
+      "y": 300
+    },
+    "goalX": 26000,
     "worldScale": 1.5
   },
-
   "background": [
-    { "key": "bg_clouds",    "parallax": 0.2,  "tileX": true },
-    { "key": "bg_mountains", "parallax": 0.15, "tileX": true, "anchor": "horizon", "scale": 1.2, "yOffset": 80 },
-    { "key": "bg_trees",     "parallax": 0.4,  "tileX": true, "anchor": "horizon", "scale": 0.2, "yOffset": 20 }
-  ],
-
-  "sky": { "top": "#4a90d9", "mid": "#87CEEB", "bottom": "#eaf6ff" },
-
-  "scenery": [
-    { "type": "ground",   "x": 0,    "y": 550, "width": 40000,"height": 40 },
-    { "type": "platform", "x": 600,  "y": 450, "width": 200,  "height": 20 },
-    { "type": "platform", "x": 900,  "y": 350, "width": 200,  "height": 20 },
-    { "type": "wall",     "x": 1500, "y": 450, "width": 50,   "height": 100 },
-    { "type": "pipe",     "x": 3050, "y": 470, "width": 64,   "height": 96 },
-    { "type": "flag",     "x": 12000,"y": 422, "width": 32,   "height": 128 }
-  ],
-
-  "zones": [
-     {
-      "id": "my-family",
-      "startX": 1000,
-      "endX": 1800,
-      "theme": "dark",
-      "sky": { "top": "#0d1b2a", "mid": "#1b3a5c", "bottom": "#2c4a6e" },
-      "ambientText": "2020 — A difficult chapter",
-      "fadeMs": 1000,
-      "music": "music_dark"
+    {
+      "key": "bg_clouds",
+      "parallax": 0.2,
+      "tileX": true
     },
     {
-      "id": "challenge-1",
-      "startX": 2200,
-      "endX": 3000,
-      "theme": "dark",
-      "sky": { "top": "#0d1b2a", "mid": "#1b3a5c", "bottom": "#2c4a6e" },
-      "ambientText": "2020 — A difficult chapter",
-      "fadeMs": 1000,
-      "music": "music_dark"
+      "key": "bg_mountains",
+      "parallax": 0.15,
+      "tileX": true,
+      "anchor": "horizon",
+      "scale": 1.2,
+      "yOffset": 80
     },
-     {
-      "id": "challenge-2",
-      "startX": 3200,
-      "endX": 5000,
-      "theme": "dark",
-      "sky": { "top": "#0d1b2a", "mid": "#1b3a5c", "bottom": "#2c4a6e" },
-      "ambientText": "2022 — A difficult chapter",
-      "fadeMs": 1000,
-      "music": "music_dark"
+    {
+      "key": "bg_trees",
+      "parallax": 0.4,
+      "tileX": true,
+      "anchor": "horizon",
+      "scale": 0.2,
+      "yOffset": 20
     }
   ],
-
-  "milestones": [
+  "sky": {
+    "top": "#4a90d9",
+    "mid": "#87CEEB",
+    "bottom": "#eaf6ff"
+  },
+  "scenery": [
     {
-      "x": 700, "y": 400, "icon": "mushroom",
-      "event": {
-        "id": "beginning",
-        "date": "TODO — Year",
-        "title": "TODO — Where it all began",
-        "text": "Replace this text with your own story. This is the first milestone the player finds — a great place to introduce yourself.",
-        "imagePath": "",
-        "trigger": "overlap",
-        "consume": true,
-        "pauseGame": true
-      }
+      "type": "ground",
+      "x": 0,
+      "y": 550,
+      "width": 40000,
+      "height": 40
     },
     {
-      "x": 1000, "y": 300, "icon": "star",
+      "type": "pipe",
+      "x": 1700,
+      "y": 454,
+      "width": 64,
+      "height": 96
+    },
+    {
+      "type": "platform",
+      "x": 2000,
+      "y": 450,
+      "width": 200,
+      "height": 20
+    },
+    {
+      "type": "wall",
+      "x": 3900,
+      "y": 450,
+      "width": 50,
+      "height": 100
+    },
+    {
+      "type": "platform",
+      "x": 5300,
+      "y": 460,
+      "width": 160,
+      "height": 20
+    },
+    {
+      "type": "platform",
+      "x": 5590,
+      "y": 380,
+      "width": 220,
+      "height": 20
+    },
+    {
+      "type": "platform",
+      "x": 6300,
+      "y": 430,
+      "width": 200,
+      "height": 20
+    },
+    {
+      "type": "pipe",
+      "x": 7500,
+      "y": 454,
+      "width": 64,
+      "height": 96
+    },
+    {
+      "type": "wall",
+      "x": 8700,
+      "y": 450,
+      "width": 50,
+      "height": 100
+    },
+    {
+      "type": "pipe",
+      "x": 9000,
+      "y": 454,
+      "width": 64,
+      "height": 96
+    },
+    {
+      "type": "wall",
+      "x": 9800,
+      "y": 450,
+      "width": 50,
+      "height": 100
+    },
+    {
+      "type": "wall",
+      "x": 10100,
+      "y": 450,
+      "width": 50,
+      "height": 100
+    },
+    {
+      "type": "platform",
+      "x": 11400,
+      "y": 440,
+      "width": 200,
+      "height": 20
+    },
+    {
+      "type": "platform",
+      "x": 12600,
+      "y": 460,
+      "width": 160,
+      "height": 20
+    },
+    {
+      "type": "platform",
+      "x": 12890,
+      "y": 380,
+      "width": 220,
+      "height": 20
+    },
+    {
+      "type": "pipe",
+      "x": 13700,
+      "y": 454,
+      "width": 64,
+      "height": 96
+    },
+    {
+      "type": "platform",
+      "x": 15000,
+      "y": 420,
+      "width": 200,
+      "height": 20
+    },
+    {
+      "type": "platform",
+      "x": 17300,
+      "y": 460,
+      "width": 160,
+      "height": 20
+    },
+    {
+      "type": "platform",
+      "x": 17590,
+      "y": 380,
+      "width": 220,
+      "height": 20
+    },
+    {
+      "type": "wall",
+      "x": 18300,
+      "y": 450,
+      "width": 50,
+      "height": 100
+    },
+    {
+      "type": "platform",
+      "x": 19600,
+      "y": 440,
+      "width": 200,
+      "height": 20
+    },
+    {
+      "type": "pipe",
+      "x": 20900,
+      "y": 454,
+      "width": 64,
+      "height": 96
+    },
+    {
+      "type": "platform",
+      "x": 22200,
+      "y": 430,
+      "width": 200,
+      "height": 20
+    },
+    {
+      "type": "wall",
+      "x": 23500,
+      "y": 450,
+      "width": 50,
+      "height": 100
+    },
+    {
+      "type": "platform",
+      "x": 24800,
+      "y": 440,
+      "width": 200,
+      "height": 20
+    },
+    {
+      "type": "flag",
+      "x": 26000,
+      "y": 422,
+      "width": 32,
+      "height": 128
+    }
+  ],
+  "zones": [
+    {
+      "id": "apertura",
+      "_section": "00 - Apertura",
+      "startX": 700,
+      "endX": 1800,
+      "theme": "light",
+      "sky": {
+        "top": "#3b6ea5",
+        "mid": "#f7b267",
+        "bottom": "#ffe6c7"
+      },
+      "ambientText": "Hola, soy Ricardo",
+      "fadeMs": 1200,
+      "music": "music_game"
+    },
+    {
+      "id": "de-donde-vengo",
+      "_section": "01 - De dónde vengo",
+      "startX": 1800,
+      "endX": 4000,
+      "theme": "light",
+      "sky": {
+        "top": "#2f7fb5",
+        "mid": "#8fd0e8",
+        "bottom": "#ffeec2"
+      },
+      "ambientText": "Guamal, Magdalena — de dónde vengo",
+      "fadeMs": 1200,
+      "music": "music_game"
+    },
+    {
+      "id": "el-ricardo-electronico",
+      "_section": "02 - El Ricardo Electrónico",
+      "startX": 4000,
+      "endX": 7600,
+      "theme": "light",
+      "sky": {
+        "top": "#3a6fb0",
+        "mid": "#7fb2e5",
+        "bottom": "#e8f2ff"
+      },
+      "ambientText": "2016–2022 — El Ricardo Electrónico",
+      "fadeMs": 1200,
+      "music": "music_game"
+    },
+    {
+      "id": "la-reinvencion",
+      "_section": "03 - La reinvención",
+      "startX": 7600,
+      "endX": 10200,
+      "theme": "dark",
+      "sky": {
+        "top": "#0d1b2a",
+        "mid": "#1b3a5c",
+        "bottom": "#2c4a6e"
+      },
+      "ambientText": "2020 — El año que me tocó reinventarme",
+      "fadeMs": 1200,
+      "music": "music_dark"
+    },
+    {
+      "id": "mi-carrera",
+      "_section": "04 - Mi carrera",
+      "startX": 10200,
+      "endX": 13800,
+      "theme": "light",
+      "sky": {
+        "top": "#4a90d9",
+        "mid": "#87CEEB",
+        "bottom": "#eaf6ff"
+      },
+      "ambientText": "2021–hoy — Mi carrera",
+      "fadeMs": 1200,
+      "music": "music_game"
+    },
+    {
+      "id": "el-ricardo-emprendedor",
+      "_section": "05 - El Ricardo Emprendedor",
+      "startX": 13800,
+      "endX": 18400,
+      "theme": "light",
+      "sky": {
+        "top": "#1f7a8c",
+        "mid": "#6fc2c9",
+        "bottom": "#e0f7f4"
+      },
+      "ambientText": "Lo que construyo por fuera",
+      "fadeMs": 1200,
+      "music": "music_game"
+    },
+    {
+      "id": "ricardo-viajero",
+      "_section": "06 - Ricardo Viajero",
+      "startX": 18400,
+      "endX": 21000,
+      "theme": "light",
+      "sky": {
+        "top": "#0f9bd7",
+        "mid": "#5fd6e8",
+        "bottom": "#f2fbff"
+      },
+      "ambientText": "Ricardo Viajero",
+      "fadeMs": 1200,
+      "music": "music_game"
+    },
+    {
+      "id": "fuera-del-computador",
+      "_section": "07 - Fuera del computador",
+      "startX": 21000,
+      "endX": 23600,
+      "theme": "light",
+      "sky": {
+        "top": "#5a4a8a",
+        "mid": "#e08fa8",
+        "bottom": "#ffd9c0"
+      },
+      "ambientText": "Fuera del computador",
+      "fadeMs": 1200,
+      "music": "music_game"
+    },
+    {
+      "id": "para-donde-voy",
+      "_section": "08 - Para dónde voy",
+      "startX": 23600,
+      "endX": 26200,
+      "theme": "light",
+      "sky": {
+        "top": "#2e4a8f",
+        "mid": "#9a86d4",
+        "bottom": "#ffe9f0"
+      },
+      "ambientText": "Para dónde voy",
+      "fadeMs": 1200,
+      "music": "music_game"
+    }
+  ],
+  "milestones": [
+    {
+      "x": 1200,
+      "y": 500,
+      "icon": "star",
       "event": {
-        "id": "education",
-        "date": "Julio 2019",
-        "title": "El dia que conocimos al steve bueno",
-        "text": "en 2019 en la robocup conocimos a Steve Wosniak, el padre de los computadores, y nos conocimos por primera vez en el mundo.",
+        "id": "intro-hola",
+        "zone": "apertura",
+        "date": "",
+        "title": "Hola, soy Ricardo",
+        "text": "Me llamo José Ricardo Romo Gutiérrez, ingeniero electrónico de formación y desarrollador de software. Lo que sigue no es mi hoja de vida: es cómo un muchacho de un pueblo del Magdalena terminó escribiendo código para aerolíneas, compitiendo con robots en Australia y montando una fabrica de hielo con energia solar.",
         "images": [
-          { "path": "/assets/images/events/2019/wosniak.jpg", "caption": "Con Steve Wozniak en la RoboCup, 2019444" },
-          { "path": "/assets/images/events/2019/wosniak.jpg", "caption": "Con Steve Wozniak en la RoboCup, 2019" }
+          {
+            "path": "assets/images/events/intro-hola/01.png",
+            "caption": "Hoy: desarrollador fullstack senior."
+          },
+          {
+            "path": "assets/images/events/intro-hola/02.png",
+            "caption": "El recorrido en cinco capítulos: de dónde vengo, cómo me volví ingeniero, cómo me volví programador, qué construyo por mi cuenta y qué hago cuando cierro el computador."
+          }
         ],
         "trigger": "overlap",
         "consume": true,
@@ -90,39 +388,391 @@
       }
     },
     {
-      "x": 1700, "y": 500, "icon": "star",
+      "x": 2400,
+      "y": 500,
+      "icon": "heart",
       "event": {
-        "id": "first-job",
-        "date": "TODO — Year",
-        "title": "TODO — First job",
-        "text": "Replace this text with the story of your first role or big break.",
-        "imagePath": "",
+        "id": "guamal",
+        "zone": "de-donde-vengo",
+        "date": "",
+        "title": "Guamal, Magdalena",
+        "text": "Nací en barranquilla y crecí en Guamal, un pueblo del sur del Magdalena a orillas del río.",
+        "images": [
+          {
+            "path": "assets/images/events/guamal/01.png",
+            "caption": "El río y la plaza: el lugar donde empieza todo lo demás."
+          },
+          {
+            "path": "assets/images/events/guamal/02.webp",
+            "caption": "La regla no escrita del que nace en pueblo: siempre hay una fecha del año en la que hay que volver."
+          }
+        ],
         "trigger": "overlap",
         "consume": true,
         "pauseGame": true
       }
     },
     {
-      "x": 2600, "y": 500, "icon": "heart",
+      "x": 3400,
+      "y": 400,
+      "icon": "heart",
       "event": {
-        "id": "challenge",
-        "date": "TODO — Year",
-        "title": "TODO — A challenge you overcame",
-        "text": "Replace this text with a challenge or setback and how you grew from it. Sits inside the Dark Zone above.",
-        "imagePath": "",
+        "id": "mi-gente",
+        "zone": "de-donde-vengo",
+        "date": "",
+        "title": "La gente que me sostiene",
+        "text": "Mi familia es muy unida: nos reunimos en Navidad sin falta y sin excusas. Y fuera de la casa soy amigo de mis amigos — sigo en contacto con los del barrio, los del colegio, los de la universidad y los de la segunda universidad. Ningún grupo se me ha caído por el camino, y eso no pasa solo.",
+        "images": [
+          {
+            "path": "assets/images/events/mi-gente/01.png",
+            "caption": "Navidad en familia, la cita que no se negocia."
+          },
+          {
+            "path": "assets/images/events/mi-gente/02.jpg",
+            "caption": "Diciembre de 2013, el día de mi grado: los que apostaron por mí antes de que hubiera resultados que mostrar."
+          },
+          {
+            "path": "assets/images/events/mi-gente/03.jpg",
+            "caption": "Amigos de infancia, de colegio y de universidad, todos todavía en el chat."
+          }
+        ],
         "trigger": "overlap",
         "consume": true,
         "pauseGame": true
       }
     },
     {
-      "x": 9400, "y": 500, "icon": "trophy",
+      "x": 4600,
+      "y": 500,
+      "icon": "star",
       "event": {
-        "id": "today",
-        "date": "Today",
-        "title": "TODO — Where I am now",
-        "text": "Replace this text with where you are today and what's next.",
-        "imagePath": "",
+        "id": "unimagdalena",
+        "zone": "el-ricardo-electronico",
+        "date": "2016 – 2022",
+        "title": "Ingeniería Electrónica — Universidad del Magdalena",
+        "text": "Estudié en Santa Marta. Elegí electrónica porque quería entender la máquina desde el transistor hacia arriba, no desde la pantalla hacia abajo. Esa decisión me costó semestres duros, pero me dio una forma de pensar que hoy es mi mayor diferencial frente a otros desarrolladores.",
+        "images": [
+          {
+            "path": "assets/images/events/unimagdalena/01.png",
+            "caption": "El campus y los laboratorios donde pasé media carrera."
+          },
+          {
+            "path": "assets/images/events/unimagdalena/02.png",
+            "caption": "Habia un lago muy bonito en la universidad, pasaba largas horas sentado, tomando fotos."
+          },
+          {
+            "path": "assets/images/events/unimagdalena/03.JPG",
+            "caption": "Aun conservo las amistades que hice en esa universidad."
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 5700,
+      "y": 300,
+      "icon": "star",
+      "event": {
+        "id": "sinfonia",
+        "zone": "el-ricardo-electronico",
+        "date": "2019 – 2021",
+        "title": "Alianza SinfonIA",
+        "text": "Fui colaborador de la Alianza SinfonIA, un grupo de investigación en robótica y machine learning formado por tres universidades: Los Andes, la Santo Tomás y la Universidad del Magdalena. Ahí aprendí a trabajar con gente de otras ciudades, otros presupuestos y otras formas de trabajar — que es básicamente lo que hago hoy en remoto.",
+        "images": [
+          {
+            "path": "assets/images/events/sinfonia/01.jpg",
+            "caption": "El laboratorio: entrenar un robot para que interactuara con personas."
+          },
+          {
+            "path": "assets/images/events/sinfonia/02.png",
+            "caption": "El equipo que clasificó para representar a Colombia en la RoboCup."
+          },
+            {
+            "path": "assets/images/events/sinfonia/03.png",
+            "caption": "El Steve bueno: conocimos a Steve Wozniak y terminamos hablando de arquitectura de procesadores y RISC-V. Ese día dejé de ver la industria como algo lejano."
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 8200,
+      "y": 500,
+      "icon": "mushroom",
+      "event": {
+        "id": "covid",
+        "zone": "la-reinvencion",
+        "date": "Marzo 2020",
+        "title": "La fase del COVID",
+        "text": "Me quedé solo en Santa Marta, estudiando virtual y sosteniéndome con tarjetas de crédito. En vez de esperar a que pasara, usé ese año para aprender a programar en serio. Otro marcador de la época: el bitcoin estaba en 3.800 dólares. Fue el año más incómodo y el más rentable de mi vida.",
+        "images": [
+          {
+            "path": "assets/images/events/covid/01.jpg",
+            "caption": "Un año encerrado, un computador y deuda de tarjeta: el capítulo que casi nadie pone en la presentación."
+          },
+          {
+            "path": "assets/images/events/covid/02.png",
+            "caption": "En ese entonces gradue a 13 medicos a travez de un programa que escribi para entregar los diplomas de manera virtual."
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 10800,
+      "y": 500,
+      "icon": "trophy",
+      "event": {
+        "id": "coordinadora",
+        "zone": "mi-carrera",
+        "date": "2021 – 2024",
+        "title": "Coordinadora Mercantil",
+        "text": "Entré en enero de 2021 a una de las empresas con más historia del país: más de medio siglo moviendo paquetes por toda Colombia. Estuve tres años. Entré como junior de backend y salí liderando un equipo.",
+        "images": [
+          {
+            "path": "assets/images/events/coordinadora/01.png",
+            "caption": "De junior a líder técnico en tres años: APIs con TypeScript y PostgreSQL, y después la migración a microservicios con Node.js, Fastify y Kubernetes."
+          }        
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 11900,
+      "y": 400,
+      "icon": "trophy",
+      "event": {
+        "id": "salto-internacional",
+        "zone": "mi-carrera",
+        "date": "2024 – hoy",
+        "title": "El salto internacional",
+        "text": "En 2024 mi trabajo dejó de ser colombiano. Hoy escribo software para equipos de Chile, que se usa en toda latinoamérica.",
+        "images": [
+          {
+            "path": "assets/images/events/salto-internacional/01.jpg",
+            "caption": "LATAM Airlines: herramientas internas de Analytics Data Ops con FastAPI y BigQuery. Primera vez que lo que escribo lo usa a diario gente que mueve aviones de verdad."
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 14400,
+      "y": 500,
+      "icon": "star",
+      "event": {
+        "id": "atenalink",
+        "zone": "el-ricardo-emprendedor",
+        "date": "",
+        "title": "Atenalink",
+        "text": "Atenalink es mi plataforma de IoT: una web para crear, gestionar y controlar proyectos de internet de las cosas, con MQTT, ESP32, FastAPI y Next.js. La estoy enfocando en agricultura, industria y monitoreo ambiental. Es el proyecto donde por fin se juntan el ingeniero electrónico y el programador que soy.",
+        "images": [
+          {
+            "path": "assets/images/events/atenalink/01.png",
+            "caption": "El dashboard: dispositivos, telemetría y control desde el navegador."
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 16600,
+      "y": 500,
+      "icon": "mushroom",
+      "event": {
+        "id": "solven-ice",
+        "zone": "el-ricardo-emprendedor",
+        "date": "",
+        "title": "Ice Guamal",
+        "text": "Y el más distinto de todos: un negocio de fabricación y venta de hielo en mi pueblo. Nada de nube, nada de microservicios: costos, logística, clientes y un producto que se derrite si uno se demora. Me enseñó de márgenes y de operación más que cualquier curso, y me mantiene conectado con Guamal.",
+        "images": [
+          {
+            "path": "assets/images/events/ice/01.png",
+            "caption": "La planta de hielo con energia solar: el único proyecto donde el bug se derrite."
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 19000,
+      "y": 500,
+      "icon": "star",
+      "event": {
+        "id": "ricardo-viajero",
+        "zone": "ricardo-viajero",
+        "date": "",
+        "title": "Ricardo Viajero",
+        "text": "Si algo me saca de la silla es viajar. He recorrido Colombia de norte a sur y cada vez que puedo cruzo la frontera. Con mis amigos de la universidad tenemos un pacto: viajamos juntos todos los años, sin falta. Mantener ese pacto ha sido más difícil que cualquier proyecto de software, y ninguno lo ha roto.",
+        "images": [
+          {
+            "path": "assets/images/events/ricardo-viajero/01.png",
+            "caption": "San Andrés (2022): buena parte de esa arena blanca la produce el pez loro, que muerde el coral y lo devuelve convertido en arena."
+          },
+          {
+            "path": "assets/images/events/ricardo-viajero/02.png",
+            "caption": "NADA (2023): NADA"
+          },
+          {
+            "path": "assets/images/events/ricardo-viajero/03.png",
+            "caption": "Eje Cafetero (2024): Salento y el Valle de Cocora, las palmas de cera más altas del mundo y el paisaje que inspiró Encanto."
+          },
+          {
+            "path": "assets/images/events/ricardo-viajero/04.png",
+            "caption": "Perú (2025): Machu Picchu, la cultura andina y, seamos honestos, la comida."
+          },
+
+          {
+            "path": "assets/images/events/ricardo-viajero/04_1.png",
+            "caption": "Perú (2025): Machu Picchu, la cultura andina y, seamos honestos, la comida."
+          },
+          {
+            "path": "assets/images/events/ricardo-viajero/05.png",
+            "caption": "Brasil (2026): el más reciente con el grupo. En la lista pendiente están México y Argentina."
+          },
+          {
+            "path": "assets/images/events/ricardo-viajero/05_1.png",
+            "caption": "Brasil (2026): el más reciente con el grupo. En la lista pendiente están México y Argentina."
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 20200,
+      "y": 400,
+      "icon": "heart",
+      "event": {
+        "id": "viaje-mama",
+        "zone": "ricardo-viajero",
+        "date": "Julio 2026",
+        "title": "El viaje de mi mamá",
+        "text": "El primer viaje de mi mamá en avion y el primero fuera del país. Poder pagarle ese tiquete es, con diferencia, el logro del que más orgulloso estoy de toda esta presentación. Todo lo demás fue camino para llegar aquí.",
+        "images": [
+          {
+            "path": "assets/images/events/viaje-mama/00.jpg",
+            "caption": "Ipiales - Pasto: la primera vez que viaja en avion y visita el santuario de las lajas de Ipiales. El aire es frío y la vista es hermosa."
+          }, {
+            "path": "assets/images/events/viaje-mama/01.jpg",
+            "caption": "España: el primer sello en su pasaporte."
+          },
+          {
+            "path": "assets/images/events/viaje-mama/02.jpg",
+            "caption": "Italia: el Vaticano, las iglesias y Venecia. Mi mamá es muy católica, así que para ella no era turismo — era otra cosa."
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 21600,
+      "y": 500,
+      "icon": "heart",
+      "event": {
+        "id": "mi-pareja",
+        "zone": "fuera-del-computador",
+        "date": "Octubre 2025",
+        "title": "Mi pareja",
+        "text": "Nos conocemos desde el colegio. Perdimos el contacto por años, la vida nos volvió a cruzar y llevamos poco más de dos años juntos. Me gusta esa historia porque se parece a todo lo demás que les he contado: las cosas buenas casi nunca llegan en línea recta.",
+        "images": [
+          {
+            "path": "assets/images/events/mi-pareja/01.jpg",
+            "caption": "Del colegio a hoy, con una pausa de varios años en el medio."
+          },
+          {
+            "path": "assets/images/events/mi-pareja/02.jpg",
+            "caption": "República Dominicana (julio 2026): primer viaje como pareja y la confirmación de que viajamos bien juntos, que no es poca cosa."
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 22800,
+      "y": 400,
+      "icon": "mushroom",
+      "event": {
+        "id": "aventurero",
+        "zone": "fuera-del-computador",
+        "date": "",
+        "title": "Ricardo Aventurero",
+        "text": "Me gusta la adrenalina en dosis razonables: parapente, buggy, todo lo que se sienta divertido sin ser temerario. Mi criterio es sencillo: si la historia se puede contar después, valió la pena.",
+        "images": [
+          {
+            "path": "assets/images/events/aventurero/01.jpg",
+            "caption": "Parapente y buggy: adrenalina con criterio."
+          },
+          {
+            "path": "assets/images/events/aventurero/02.jpg",
+            "caption": "El resto del tiempo libre: microcontroladores en la mesa del comedor, divulgación científica y planear el próximo viaje. [AJUSTAR: agrega o quita lo que aplique]"
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 24200,
+      "y": 500,
+      "icon": "star",
+      "event": {
+        "id": "para-donde-voy",
+        "zone": "para-donde-voy",
+        "date": "",
+        "title": "Para dónde voy",
+        "text": "El próximo capítulo es Medellín: quiero vivir allá, comprar un carro híbrido y recorrerme uno por uno todos los pueblos de Antioquia. Es la primera vez que elijo una ciudad por gusto y no por trabajo.",
+        "images": [
+          {
+            "path": "assets/images/events/para-donde-voy/01.jpg",
+            "caption": "Medellín (agosto 2026): la primera ciudad que elijo por gusto y no por trabajo."
+          },
+          {
+            "path": "assets/images/events/para-donde-voy/02.jpg",
+            "caption": "Enero de 2027, los países nórdicos. La meta concreta es ver una aurora boreal — esta foto la pongo cuando vuelva."
+          }
+        ],
+        "trigger": "overlap",
+        "consume": true,
+        "pauseGame": true
+      }
+    },
+    {
+      "x": 25600,
+      "y": 500,
+      "icon": "trophy",
+      "event": {
+        "id": "cierre",
+        "zone": "para-donde-voy",
+        "date": "",
+        "title": "En resumen",
+        "text": "Vengo de un pueblo del Magdalena, estudié electrónica, aprendí a programar solo en plena pandemia, lideré un proyecto nacional, hoy escribo software para clientes en Chile y Reino Unido, y sigo vendiendo hielo en mi tierra. Si tuviera que resumirlo en una frase: me gusta entender cómo funcionan las cosas por dentro y después arreglarlas. Gracias.",
+        "images": [
+          {
+            "path": "assets/images/events/cierre/01.jpg",
+            "caption": "Hacia dónde va el trabajo: arquitectura y liderazgo técnico, IA generativa con agentes que ejecuten de verdad, e IoT aplicado al agro colombiano. Atenalink es donde junto las tres."
+          }
+        ],
         "trigger": "overlap",
         "consume": true,
         "pauseGame": true
